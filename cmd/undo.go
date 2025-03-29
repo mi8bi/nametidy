@@ -13,9 +13,10 @@ var undoCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dirPath, _ := cmd.Flags().GetString("path")
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
+		verbose, _ := cmd.Flags().GetBool("verbose")
 
 		// ロガーの初期化
-		utils.InitLogger(false)
+		utils.InitLogger(verbose)
 
 		// ディレクトリ存在チェック
 		if !utils.IsDirectory(dirPath) {
@@ -34,8 +35,10 @@ var undoCmd = &cobra.Command{
 }
 
 func init() {
-	undoCmd.Flags().StringP("path", "p", ".", "対象ディレクトリのパス")
+	undoCmd.Flags().StringP("path", "p", "", "対象ディレクトリのパス")
 	undoCmd.Flags().BoolP("dry-run", "d", false, "リネーム結果のみ表示")
+	undoCmd.Flags().BoolP("verbose", "v", false, "詳細なログを表示")
+	undoCmd.MarkFlagRequired("path")
 
 	rootCmd.AddCommand(undoCmd)
 }

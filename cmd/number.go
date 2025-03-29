@@ -14,9 +14,10 @@ var numberCmd = &cobra.Command{
 		dirPath, _ := cmd.Flags().GetString("path")
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
 		numbered, _ := cmd.Flags().GetInt("numbered")
+		verbose, _ := cmd.Flags().GetBool("verbose")
 
 		// ロガーの初期化
-		utils.InitLogger(false)
+		utils.InitLogger(verbose)
 
 		// ディレクトリ存在チェック
 		if !utils.IsDirectory(dirPath) {
@@ -35,9 +36,11 @@ var numberCmd = &cobra.Command{
 }
 
 func init() {
-	numberCmd.Flags().StringP("path", "p", ".", "対象ディレクトリのパス")
+	numberCmd.Flags().StringP("path", "p", "", "対象ディレクトリのパス")
 	numberCmd.Flags().BoolP("dry-run", "d", false, "リネーム結果のみ表示")
 	numberCmd.Flags().IntP("numbered", "n", 0, "ファイル名に連番を付ける")
+	numberCmd.Flags().BoolP("verbose", "v", false, "詳細なログを表示")
+	numberCmd.MarkFlagRequired("path")
 
 	rootCmd.AddCommand(numberCmd)
 }
