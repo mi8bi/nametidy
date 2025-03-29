@@ -9,31 +9,27 @@ import (
 	"path/filepath"
 )
 
-const historyFile = ".NameTidy_History"
+const HISTORY_FILE = ".NameTidy_History"
 
 // Clean は指定ディレクトリ内のファイル名をクリーンアップする（再帰的にサブディレクトリも処理）
 func Clean(dirPath string, dryRun bool) error {
-	// Walkで再帰的にファイルとディレクトリを走査
-	entries := make(map[string]string) // 変更前後のファイル名を保持するマップ
+	entries := make(map[string]string)
 
 	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// ディレクトリはスキップ
-		if info.IsDir() {
+		// 履歴ファイルは無視
+		if info.IsDir() || filepath.Base(path) == HISTORY_FILE {
 			return nil
 		}
 
-		// ファイル名のクリーンアップ
 		oldName := info.Name()
 		newName := utils.CleanFileName(oldName)
 
-		// 名前が変更される場合
 		if oldName != newName {
 			newPath := filepath.Join(filepath.Dir(path), newName)
-			// dry-runの場合、実際にはリネームしない
 			if dryRun {
 				fmt.Printf("[DRY-RUN] %s → %s\n", path, newPath)
 			} else {
@@ -42,7 +38,6 @@ func Clean(dirPath string, dryRun bool) error {
 					return err
 				}
 				fmt.Printf("Renamed: %s → %s\n", path, newPath)
-				// 実際にリネームした場合、履歴に追加
 				entries[path] = newPath
 			}
 		}
@@ -53,7 +48,6 @@ func Clean(dirPath string, dryRun bool) error {
 		return err
 	}
 
-	// dryRunがfalseの場合のみ履歴を保存
 	if !dryRun {
 		if err := saveHistory(dirPath, entries); err != nil {
 			utils.Error("履歴の保存に失敗しました", err)
@@ -66,16 +60,15 @@ func Clean(dirPath string, dryRun bool) error {
 
 // saveHistory はリネーム履歴を保存
 func saveHistory(dirPath string, history map[string]string) error {
-    data, err := json.Marshal(history)
-    if err != nil {
-        return err
-    }
+	data, err := json.Marshal(history)
+	if err != nil {
+		return err
+	}
 
-    // 履歴ファイルの保存パスを確認
-    historyFilePath := filepath.Join(dirPath, historyFile)
-    fmt.Printf("履歴ファイルパス: %s\n", historyFilePath)  // 履歴ファイルパスをログ出力
+	historyFilePath := filepath.Join(dirPath, HISTORY_FILE)
+	fmt.Printf("履歴ファイルパス: %s\n", historyFilePath)
 
-    return os.WriteFile(historyFilePath, data, 0644)
+	return os.WriteFile(historyFilePath, data, 0644)
 }
 
 // NumberFiles ファイル名へのナンバリングを行う
@@ -84,19 +77,24 @@ func NumberFiles(dirPath string, digits int, hierarchical bool, dryRun bool) err
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() {
-			newPath, err := utils.AddNumbering(path, digits, hierarchical)
-			if err != nil {
-				return err
+
+		// 履歴ファイルは無視
+		if info.IsDir() || filepath.Base(path) == HISTORY_FILE {
+			return nil
+		}
+
+		newPath, err := utils.AddNumbering(path, digits, hierarchical)
+		if err != nil {
+			return err
+		}
+
+		if dryRun {
+			fmt.Printf("[DRY-RUN] %s → %s\n", path, newPath)
+		} else {
+			if err := os.Rename(path, newPath); err != nil {
+				return fmt.Errorf("ファイルのリネームに失敗しました: %v", err)
 			}
-			if dryRun {
-				fmt.Printf("[DRY-RUN] %s → %s\n", path, newPath)
-			} else {
-				if err := os.Rename(path, newPath); err != nil {
-					return fmt.Errorf("ファイルのリネームに失敗しました: %v", err)
-				}
-				fmt.Printf("Renamed: %s → %s\n", path, newPath)
-			}
+			fmt.Printf("Renamed: %s → %s\n", path, newPath)
 		}
 		return nil
 	})
@@ -104,44 +102,46 @@ func NumberFiles(dirPath string, digits int, hierarchical bool, dryRun bool) err
 
 // Undo は直前のリネーム操作を取り消す
 func Undo(dirPath string, dryRun bool) error {
-    history, err := loadHistory(dirPath)
-    if err != nil {
-        return err
-    }
+	history, err := loadHistory(dirPath)
+	if err != nil {
+		return err
+	}
 
-    for oldPath, newPath := range history {
-        if utils.FileExists(newPath) {
-			// dry-run の場合、実際にはリネームしない
-            if dryRun {
-                fmt.Printf("[DRY-RUN] %s → %s\n", newPath, oldPath)
-            } else {
-                err := utils.RenameFile(newPath, oldPath, false)
-                if err != nil {
-                    utils.Error("リネームの取り消し失敗", err)
-                }
-            }
-        }
-    }
+	for oldPath, newPath := range history {
+		if oldPath == HISTORY_FILE || newPath == HISTORY_FILE {
+			continue // 履歴ファイルは無視
+		}
 
-    // 履歴ファイルの削除
-    if !dryRun {
-        return os.Remove(filepath.Join(dirPath, historyFile))
-    }
+		if utils.FileExists(newPath) {
+			if dryRun {
+				fmt.Printf("[DRY-RUN] %s → %s\n", newPath, oldPath)
+			} else {
+				err := utils.RenameFile(newPath, oldPath, false)
+				if err != nil {
+					utils.Error("リネームの取り消し失敗", err)
+				}
+			}
+		}
+	}
 
-    return nil
+	if !dryRun {
+		return os.Remove(filepath.Join(dirPath, HISTORY_FILE))
+	}
+
+	return nil
 }
 
 // loadHistory はリネーム履歴を読み込む
 func loadHistory(dirPath string) (map[string]string, error) {
-    data, err := os.ReadFile(filepath.Join(dirPath, historyFile))
-    if err != nil {
-        return nil, errors.New("リネーム履歴が見つかりません")
-    }
+	data, err := os.ReadFile(filepath.Join(dirPath, HISTORY_FILE))
+	if err != nil {
+		return nil, errors.New("リネーム履歴が見つかりません")
+	}
 
-    history := make(map[string]string)
-    if err := json.Unmarshal(data, &history); err != nil {
-        return nil, errors.New("履歴データの読み取りに失敗しました")
-    }
+	history := make(map[string]string)
+	if err := json.Unmarshal(data, &history); err != nil {
+		return nil, errors.New("履歴データの読み取りに失敗しました")
+	}
 
-    return history, nil
+	return history, nil
 }

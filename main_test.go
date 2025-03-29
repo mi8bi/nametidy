@@ -30,7 +30,7 @@ func buildExecutable(t *testing.T) string {
 // テスト用のディレクトリとファイルの準備
 func setupTestEnvironment(t *testing.T) {
 	os.Mkdir(testDir, 0755)
-	files := []string{"IMG 2023 01 01.JPG", "_MyFile__.txt", "Special$$File!.docx"}
+	files := []string{"IMG 2023 01 01.JPG", "_MyFile__.txt", "Special$$File!.docx", ".NameTidy_History"}
 	for _, file := range files {
 		path := filepath.Join(testDir, file)
 		os.WriteFile(path, []byte("test content"), 0644)
@@ -60,6 +60,11 @@ func TestClean(t *testing.T) {
 		if _, err := os.Stat(filepath.Join(testDir, file)); os.IsNotExist(err) {
 			t.Errorf("期待されるファイルが見つかりません: %s", file)
 		}
+	}
+
+	// `.NameTidy_History` は変更されていないことを確認
+	if _, err := os.Stat(filepath.Join(testDir, ".NameTidy_History")); os.IsNotExist(err) {
+		t.Errorf("履歴ファイルが見つかりません: .NameTidy_History")
 	}
 }
 
@@ -123,6 +128,40 @@ func TestUndo(t *testing.T) {
 	for _, file := range originalFiles {
 		if _, err := os.Stat(filepath.Join(testDir, file)); os.IsNotExist(err) {
 			t.Errorf("元のファイルが見つかりません: %s", file)
+		}
+	}
+}
+
+// TestUndoDryRun - `--undo --dry-run` のテスト
+func TestUndoDryRun(t *testing.T) {
+	setupTestEnvironment(t)
+	defer teardownTestEnvironment()
+
+	exeName := buildExecutable(t)
+
+	// Step 1: `--clean` でリネーム実行
+	cmd := exec.Command("./" + exeName, "clean", "--path="+testDir)
+	cmd.CombinedOutput()
+
+	// Step 2: `--undo --dry-run` で取り消しのシミュレーション
+	cmd = exec.Command("./" + exeName, "undo", "--path="+testDir, "--dry-run")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("エラー: %v\n出力: %s", err, string(output))
+	}
+
+	// 実際の出力からパスを削除
+	actual := strings.Replace(string(output), testDir+"\\", "", -1)
+
+	expectedOutput := []string{
+		"[DRY-RUN] IMG_2023_01_01.JPG → IMG 2023 01 01.JPG",
+		"[DRY-RUN] MyFile.txt → _MyFile__.txt",
+		"[DRY-RUN] Special_File.docx → Special$$File!.docx",
+	}
+
+	for _, expected := range expectedOutput {
+		if !strings.Contains(actual, expected) {
+			t.Errorf("期待される出力が見つかりません: %s", expected)
 		}
 	}
 }
