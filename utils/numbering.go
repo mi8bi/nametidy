@@ -7,9 +7,9 @@ import (
 )
 
 // AddNumbering ファイル名に連番を付与する
-func AddNumbering(path string, digits int, hierarchical bool) (string, error) {
+func AddNumbering(path string, digits int, index int) (string, error) {
 	dir, file := filepath.Split(path)
-	newName := GenerateNumberedName(file, digits, getNextIndex(dir))
+	newName := GenerateNumberedName(file, digits, index)
 
 	// ファイルの新しいパスを作成
 	newPath := filepath.Join(dir, newName)
@@ -26,16 +26,31 @@ func GenerateNumberedName(baseName string, digits int, index int) string {
 
 // ProcessDirectory ディレクトリ内のファイルに連番を付ける
 func ProcessDirectory(dirPath string, digits int, hierarchical bool) error {
+	counts := make(map[string]int)
+
 	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
+
 		if !info.IsDir() {
+			var dirKey string
+			if hierarchical {
+				dirKey = filepath.Dir(path)
+			} else {
+				dirKey = "global"
+			}
+
+			// カウントのインクリメント
+			counts[dirKey]++
+			count := counts[dirKey]
+
 			// ファイルの連番を付ける
-			newPath, err := AddNumbering(path, digits, hierarchical)
+			newPath, err := AddNumbering(path, digits, count)
 			if err != nil {
 				return err
 			}
+
 			// ファイルをリネーム
 			if err := os.Rename(path, newPath); err != nil {
 				return fmt.Errorf("ファイルのリネームに失敗しました: %v", err)
@@ -48,21 +63,4 @@ func ProcessDirectory(dirPath string, digits int, hierarchical bool) error {
 		return fmt.Errorf("ディレクトリの処理中にエラーが発生しました: %v", err)
 	}
 	return nil
-}
-
-// getNextIndex ディレクトリ内のファイルのインデックスを取得
-func getNextIndex(dir string) int {
-	var maxIndex int
-	files, _ := filepath.Glob(filepath.Join(dir, "*"))
-
-	for _, file := range files {
-		fileName := filepath.Base(file)
-		var index int
-		_, err := fmt.Sscanf(fileName, "%d_", &index)
-		if err == nil && index > maxIndex {
-			maxIndex = index
-		}
-	}
-
-	return maxIndex + 1 // 次のインデックスを返す
 }

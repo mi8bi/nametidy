@@ -73,6 +73,9 @@ func saveHistory(dirPath string, history map[string]string) error {
 
 // NumberFiles ファイル名へのナンバリングを行う
 func NumberFiles(dirPath string, digits int, hierarchical bool, dryRun bool) error {
+	// ディレクトリごとのカウントを管理
+	counts := make(map[string]int)
+
 	return filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -83,7 +86,21 @@ func NumberFiles(dirPath string, digits int, hierarchical bool, dryRun bool) err
 			return nil
 		}
 
-		newPath, err := utils.AddNumbering(path, digits, hierarchical)
+		var dirKey string
+		if hierarchical {
+			// ディレクトリごとにカウントをリセット
+			dirKey = filepath.Dir(path)
+		} else {
+			// すべてのファイルで通し番号
+			dirKey = "global"
+		}
+
+		// カウントのインクリメント
+		counts[dirKey]++
+		count := counts[dirKey]
+
+		// 新しいファイル名の生成
+		newPath, err := utils.AddNumbering(path, digits, count)
 		if err != nil {
 			return err
 		}
