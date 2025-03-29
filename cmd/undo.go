@@ -12,6 +12,7 @@ var undoCmd = &cobra.Command{
 	Short: "リネームの取り消しを行います。",
 	Run: func(cmd *cobra.Command, args []string) {
 		dirPath, _ := cmd.Flags().GetString("path")
+		dryRun, _ := cmd.Flags().GetBool("dry-run")
 
 		// ロガーの初期化
 		utils.InitLogger(false)
@@ -24,7 +25,7 @@ var undoCmd = &cobra.Command{
 
 		// --undo処理
 		utils.Info("リネームの取り消しを開始します...")
-		if err := cleaner.Undo(dirPath); err != nil {
+		if err := cleaner.Undo(dirPath, dryRun); err != nil {
 			utils.Error("リネームの取り消しに失敗しました", err)
 			return
 		}

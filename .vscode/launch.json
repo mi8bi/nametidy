@@ -10,8 +10,8 @@
             "request": "launch",
             "mode": "auto",
             "args": [
+                "clean",
                 "--path=test_data",
-                "--clean"
             ],
             "program": "${workspaceFolder}/main.go"
         },
@@ -21,8 +21,8 @@
             "request": "launch",
             "mode": "auto",
             "args": [
+                "undo",
                 "--path=test_data",
-                "--undo"
             ],
             "program": "${workspaceFolder}/main.go"
         }
