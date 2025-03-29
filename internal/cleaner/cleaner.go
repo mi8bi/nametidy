@@ -1,7 +1,7 @@
 package cleaner
 
 import (
-	"NameTidy/utils"
+	"NameTidy/internal/utils"
 	"encoding/json"
 	"errors"
 	"fmt"

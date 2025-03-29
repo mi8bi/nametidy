@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"NameTidy/cleaner"
-	"NameTidy/utils"
+	"NameTidy/internal/cleaner"
+	"NameTidy/internal/utils"
 
 	"github.com/spf13/cobra"
 )
