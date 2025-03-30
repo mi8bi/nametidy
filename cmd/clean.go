@@ -9,35 +9,35 @@ import (
 
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "ファイル名をクリーンアップします。",
+	Short: "Cleans up file names.",
 	Run: func(cmd *cobra.Command, args []string) {
 		dirPath, _ := cmd.Flags().GetString("path")
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
 		verbose, _ := cmd.Flags().GetBool("verbose")
 
-		// ロガーの初期化
+		// Initialize logger
 		utils.InitLogger(verbose)
 
-		// ディレクトリ存在チェック
+		// Check if directory exists
 		if !utils.IsDirectory(dirPath) {
-			utils.Error("指定されたディレクトリが存在しません", nil)
+			utils.Error("The specified directory does not exist", nil)
 			return
 		}
 
-		// --clean処理
-		utils.Info("ファイル名のクリーニングを開始します...")
+		// --clean process
+		utils.Info("Starting file name cleanup...")
 		if err := cleaner.Clean(dirPath, dryRun); err != nil {
-			utils.Error("ファイル名のクリーニングに失敗しました", err)
+			utils.Error("File name cleanup failed", err)
 			return
 		}
-		utils.Info("ファイル名のクリーニングが完了しました。")
+		utils.Info("File name cleanup completed.")
 	},
 }
 
 func init() {
-	cleanCmd.Flags().StringP("path", "p", "", "対象ディレクトリのパス")
-	cleanCmd.Flags().BoolP("dry-run", "d", false, "リネーム結果のみ表示")
-	cleanCmd.Flags().BoolP("verbose", "v", false, "詳細なログを表示")
+	cleanCmd.Flags().StringP("path", "p", "", "Path to the target directory")
+	cleanCmd.Flags().BoolP("dry-run", "d", false, "Show rename results only")
+	cleanCmd.Flags().BoolP("verbose", "v", false, "Show detailed logs")
 	cleanCmd.MarkFlagRequired("path")
 
 	rootCmd.AddCommand(cleanCmd)

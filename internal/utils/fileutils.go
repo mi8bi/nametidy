@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// IsDirectory は指定パスがディレクトリかを確認する
+// IsDirectory checks if the specified path is a directory
 func IsDirectory(path string) bool {
     info, err := os.Stat(path)
     if err != nil {
@@ -17,30 +17,28 @@ func IsDirectory(path string) bool {
     return info.IsDir()
 }
 
-// CleanFileName 修正
+// CleanFileName cleans up the file name by replacing unwanted characters
 func CleanFileName(fileName string) string {
-	// 拡張子を取り除く
+	// Remove file extension
 	ext := filepath.Ext(fileName)
 	baseName := fileName[:len(fileName)-len(ext)]
 
-	// アルファベット、数字、ドット以外の文字を _ に置き換える
+	// Replace non-alphanumeric characters (except dot) with an underscore
 	reClean := regexp.MustCompile(`[^\w\d.]`)
 	baseName = reClean.ReplaceAllString(baseName, "_")
 
-	// 連続するアンダースコアを1つにする
+	// Replace consecutive underscores with a single underscore
 	reUnderscore := regexp.MustCompile(`_+`)
 	baseName = reUnderscore.ReplaceAllString(baseName, "_")
 
-	// 先頭と末尾のアンダースコアを取り除く
+	// Remove leading and trailing underscores
 	baseName = strings.Trim(baseName, "_")
 
-	// 拡張子を元に戻す
+	// Restore file extension
 	return baseName + ext
 }
 
-
-
-// RenameFile はファイルをリネームする
+// RenameFile renames a file from oldPath to newPath
 func RenameFile(oldPath, newPath string, dryRun bool) error {
     if dryRun {
         fmt.Printf("[DRY-RUN] %s → %s\n", oldPath, newPath)
@@ -49,14 +47,14 @@ func RenameFile(oldPath, newPath string, dryRun bool) error {
 
     err := os.Rename(oldPath, newPath)
     if err != nil {
-        return fmt.Errorf("リネームに失敗しました: %v", err)
+        return fmt.Errorf("Rename failed: %v", err)
     }
 
     fmt.Printf("Renamed: %s → %s\n", filepath.Base(oldPath), filepath.Base(newPath))
     return nil
 }
 
-// FileExists は指定したパスのファイルが存在するか確認する
+// FileExists checks if the specified file exists at the given path
 func FileExists(path string) bool {
     _, err := os.Stat(path)
     return !os.IsNotExist(err)

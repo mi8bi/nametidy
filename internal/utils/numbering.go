@@ -6,17 +6,17 @@ import (
 	"path/filepath"
 )
 
-// AddNumbering ファイル名に連番を付与する
+// AddNumbering adds a sequence number to the file name
 func AddNumbering(path string, digits int, index int) (string, error) {
 	dir, file := filepath.Split(path)
 	newName := GenerateNumberedName(file, digits, index)
 
-	// ファイルの新しいパスを作成
+	// Create the new file path
 	newPath := filepath.Join(dir, newName)
 	return newPath, nil
 }
 
-// GenerateNumberedName ファイル名に番号を付ける
+// GenerateNumberedName generates a numbered name for the file
 func GenerateNumberedName(baseName string, digits int, index int) string {
 	indexStr := fmt.Sprintf("%0*d", digits, index)
 	ext := filepath.Ext(baseName)
@@ -24,7 +24,7 @@ func GenerateNumberedName(baseName string, digits int, index int) string {
 	return fmt.Sprintf("%s_%s%s", indexStr, fileName, ext)
 }
 
-// ProcessDirectory ディレクトリ内のファイルに連番を付ける
+// ProcessDirectory adds sequence numbers to the files in the directory
 func ProcessDirectory(dirPath string, digits int, hierarchical bool) error {
 	counts := make(map[string]int)
 
@@ -41,26 +41,26 @@ func ProcessDirectory(dirPath string, digits int, hierarchical bool) error {
 				dirKey = "global"
 			}
 
-			// カウントのインクリメント
+			// Increment the count
 			counts[dirKey]++
 			count := counts[dirKey]
 
-			// ファイルの連番を付ける
+			// Add the sequence number to the file
 			newPath, err := AddNumbering(path, digits, count)
 			if err != nil {
 				return err
 			}
 
-			// ファイルをリネーム
+			// Rename the file
 			if err := os.Rename(path, newPath); err != nil {
-				return fmt.Errorf("ファイルのリネームに失敗しました: %v", err)
+				return fmt.Errorf("failed to rename file: %v", err)
 			}
 			fmt.Printf("Renamed: %s → %s\n", path, newPath)
 		}
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("ディレクトリの処理中にエラーが発生しました: %v", err)
+		return fmt.Errorf("error occurred while processing the directory: %v", err)
 	}
 	return nil
 }

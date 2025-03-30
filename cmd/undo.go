@@ -9,35 +9,35 @@ import (
 
 var undoCmd = &cobra.Command{
 	Use:   "undo",
-	Short: "リネームの取り消しを行います。",
+	Short: "Undoes the most recent rename operation.",
 	Run: func(cmd *cobra.Command, args []string) {
 		dirPath, _ := cmd.Flags().GetString("path")
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
 		verbose, _ := cmd.Flags().GetBool("verbose")
 
-		// ロガーの初期化
+		// Initialize logger
 		utils.InitLogger(verbose)
 
-		// ディレクトリ存在チェック
+		// Check if directory exists
 		if !utils.IsDirectory(dirPath) {
-			utils.Error("指定されたディレクトリが存在しません", nil)
+			utils.Error("The specified directory does not exist", nil)
 			return
 		}
 
-		// --undo処理
-		utils.Info("リネームの取り消しを開始します...")
+		// --undo process
+		utils.Info("Starting to undo the rename operation...")
 		if err := cleaner.Undo(dirPath, dryRun); err != nil {
-			utils.Error("リネームの取り消しに失敗しました", err)
+			utils.Error("Failed to undo the rename operation", err)
 			return
 		}
-		utils.Info("リネームの取り消しが完了しました。")
+		utils.Info("Undoing the rename operation is complete.")
 	},
 }
 
 func init() {
-	undoCmd.Flags().StringP("path", "p", "", "対象ディレクトリのパス")
-	undoCmd.Flags().BoolP("dry-run", "d", false, "リネーム結果のみ表示")
-	undoCmd.Flags().BoolP("verbose", "v", false, "詳細なログを表示")
+	undoCmd.Flags().StringP("path", "p", "", "Path to the target directory")
+	undoCmd.Flags().BoolP("dry-run", "d", false, "Show rename results only")
+	undoCmd.Flags().BoolP("verbose", "v", false, "Show detailed logs")
 	undoCmd.MarkFlagRequired("path")
 
 	rootCmd.AddCommand(undoCmd)

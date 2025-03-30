@@ -9,7 +9,7 @@ import (
 
 var numberCmd = &cobra.Command{
 	Use:   "number",
-	Short: "ファイル名に連番を追加します。",
+	Short: "Adds sequence numbers to file names.",
 	Run: func(cmd *cobra.Command, args []string) {
 		dirPath, _ := cmd.Flags().GetString("path")
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
@@ -17,31 +17,31 @@ var numberCmd = &cobra.Command{
 		hierarchical, _ := cmd.Flags().GetBool("hierarchical")
 		verbose, _ := cmd.Flags().GetBool("verbose")
 
-		// ロガーの初期化
+		// Initialize logger
 		utils.InitLogger(verbose)
 
-		// ディレクトリ存在チェック
+		// Check if directory exists
 		if !utils.IsDirectory(dirPath) {
-			utils.Error("指定されたディレクトリが存在しません", nil)
+			utils.Error("The specified directory does not exist", nil)
 			return
 		}
 
-		// --numbered処理
-		utils.Info("ファイル名への連番追加を開始します...")
+		// --numbered process
+		utils.Info("Starting to add sequence numbers to file names...")
 		if err := cleaner.NumberFiles(dirPath, numbered, hierarchical, dryRun); err != nil {
-			utils.Error("ファイル名への連番追加に失敗しました", err)
+			utils.Error("Failed to add sequence numbers to file names", err)
 			return
 		}
-		utils.Info("ファイル名への連番追加が完了しました。")
+		utils.Info("Sequence number addition to file names completed.")
 	},
 }
 
 func init() {
-	numberCmd.Flags().StringP("path", "p", "", "対象ディレクトリのパス")
-	numberCmd.Flags().BoolP("dry-run", "d", false, "リネーム結果のみ表示")
-	numberCmd.Flags().IntP("numbered", "n", 3, "ファイル名に連番を付ける")
-	numberCmd.Flags().BoolP("hierarchical", "H", false, "ディレクトリ単位で連番を付ける")
-	numberCmd.Flags().BoolP("verbose", "v", false, "詳細なログを表示")
+	numberCmd.Flags().StringP("path", "p", "", "Path to the target directory")
+	numberCmd.Flags().BoolP("dry-run", "d", false, "Show rename results only")
+	numberCmd.Flags().IntP("numbered", "n", 3, "Add sequence numbers to file names")
+	numberCmd.Flags().BoolP("hierarchical", "H", false, "Add sequence numbers based on directory structure")
+	numberCmd.Flags().BoolP("verbose", "v", false, "Show detailed logs")
 	numberCmd.MarkFlagRequired("path")
 
 	rootCmd.AddCommand(numberCmd)
