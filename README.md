@@ -1,6 +1,7 @@
 # NameTidy
 
 **Status**: *Under Development*
+
 NameTidy is a CLI tool that helps users easily rename and organize files. It provides functionalities such as file name cleanup, renaming, numbering, and undoing actions.
 
 ## Table of Contents
