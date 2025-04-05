@@ -1,4 +1,4 @@
-# NameTidy
+# [NameTidy](https://mi8bi.github.io/NameTidy/)
 
 **Status**: *Under Development*
 
