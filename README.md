@@ -1,4 +1,12 @@
+> ✨ A fast and simple CLI tool to clean and rename file names — powered by Go.
+
 # [NameTidy](https://mi8bi.github.io/NameTidy/)
+
+## 🔧 Demo
+
+The following demo shows how NameTidy can clean and organize files with ease.
+
+[![NameTidy_Demo001](https://asciinema.org/a/711924.svg)](https://asciinema.org/a/711924)
 
 **Status**: *Under Development*
 
@@ -137,3 +145,6 @@ Renamed: ./test_dir/folder2/image.png → ./test_dir/folder2/001_image.png
 ## License
 
 This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
+
+# GitHub Topics
+[cli](https://github.com/topics/cli) [golang](https://github.com/topics/golang) [file-management](https://github.com/topics/file-management) [rename-files](https://github.com/topics/rename-files)
