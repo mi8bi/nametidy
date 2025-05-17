@@ -24,9 +24,16 @@ var cleanCmd = &cobra.Command{
 			return
 		}
 
+		// Initialize DB
+		db, err := cleaner.GetDB()
+		if err != nil {
+			utils.Error("Failed to open DB", err)
+			return
+		}
+
 		// --clean process
 		utils.Info("Starting file name cleanup...")
-		if err := cleaner.Clean(dirPath, dryRun); err != nil {
+		if err := cleaner.Clean(db, dirPath, dryRun); err != nil {
 			utils.Error("File name cleanup failed", err)
 			return
 		}

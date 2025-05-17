@@ -26,9 +26,16 @@ var numberCmd = &cobra.Command{
 			return
 		}
 
+		// Initialize DB
+		db, err := cleaner.GetDB()
+		if err != nil {
+			utils.Error("Failed to open DB", err)
+			return
+		}
+
 		// --numbered process
 		utils.Info("Starting to add sequence numbers to file names...")
-		if err := cleaner.NumberFiles(dirPath, numbered, hierarchical, dryRun); err != nil {
+		if err := cleaner.NumberFiles(db, dirPath, numbered, hierarchical, dryRun); err != nil {
 			utils.Error("Failed to add sequence numbers to file names", err)
 			return
 		}
