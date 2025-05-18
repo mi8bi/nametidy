@@ -11,7 +11,7 @@ It supports operations such as filename cleanup, adding sequence numbers, and un
 
 See NameTidy in action:
 
-[![NameTidy_Demo001](https://asciinema.org/a/711924.svg)](https://asciinema.org/a/711924)
+[![NameTidy_Demo002](https://asciinema.org/a/719898.svg)](https://asciinema.org/a/719898)
 
 **Status**: 🚧 *Under Development*
 
