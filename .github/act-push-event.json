@@ -1,0 +1,12 @@
+{
+  "ref": "refs/tags/v0.1.0",
+  "before": "0000000000000000000000000000000000000000",
+  "after": "1111111111111111111111111111111111111111",
+  "repository": {
+    "name": "NameTidy",
+    "full_name": "mi8bi/NameTidy",
+    "owner": {
+      "login": "mi8bi"
+    }
+  }
+}

@@ -2,29 +2,41 @@
 
 # [NameTidy](https://mi8bi.github.io/NameTidy/)
 
-## 🔧 Demo
+NameTidy is a fast and flexible command-line tool for cleaning and renaming file names.  
+It supports operations such as filename cleanup, adding sequence numbers, and undoing changes — all with a simple and intuitive interface.
 
-The following demo shows how NameTidy can clean and organize files with ease.
+---
+
+## 📽️ Demo
+
+See NameTidy in action:
 
 [![NameTidy_Demo001](https://asciinema.org/a/711924.svg)](https://asciinema.org/a/711924)
 
-**Status**: *Under Development*
+**Status**: 🚧 *Under Development*
 
-NameTidy is a CLI tool that helps users easily rename and organize files. It provides functionalities such as file name cleanup, renaming, numbering, and undoing actions.
+---
 
-## Table of Contents
+## 📦 Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Clean Up Filenames](#clean-up-filenames)
+  - [Undo Changes](#undo-changes)
+  - [Dry Run Mode](#dry-run-mode)
+  - [Verbose Logging](#verbose-logging)
+  - [Add Sequence Numbers](#add-sequence-numbers)
 - [Options](#options)
 - [License](#license)
 
-## Installation
+---
 
-NameTidy is developed in Go. You can install it by following these steps:
+## 🛠️ Installation
 
-1. Ensure that Go is installed on your system.
-2. Clone this repository:
+NameTidy is written in Go. To install it locally:
+
+1. Make sure Go is installed: https://golang.org/dl/
+2. Clone the repository:
 
 ```bash
 git clone https://github.com/mi8bi/NameTidy.git
@@ -38,12 +50,12 @@ go build
 ```
 
 
-## Usage
+## 🚀 Usage
 
-You can easily organize file names within a specified directory using NameTidy. The following commands allow you to perform various actions:
+Organize and standardize file names in your target directory using intuitive subcommands.
 
-### Clean Up
-This command cleans up file names by removing unwanted characters or formatting, converting them to a standard format.
+### Clean Up Filenames
+Removes unwanted characters, converts spaces to underscores, and standardizes file names.
 
 ```bash
 NameTidy clean -p ./test_dir
@@ -58,8 +70,8 @@ History file path: ./test_dir/.NameTidy_History
 ```
 
 
-### Undo Rename (Undo)
-This command undoes the most recent rename operation.
+### Undo Changes
+Restores the most recent file renaming performed by NameTidy
 
 ```bash
 NameTidy undo -p ./test_dir
@@ -74,7 +86,7 @@ Restored: ./test_dir/hello_world.txt → ./test_dir/hello world.txt
 
 
 ### Dry Run
-This command shows the intended changes without actually modifying any files.
+Displays changes without modifying any files.
 
 ```bash
 NameTidy clean -p ./test_dir -d
@@ -88,8 +100,8 @@ NameTidy clean -p ./test_dir -d
 ```
 
 
-### Verbose Mode
-This command provides detailed log output during processing.
+### Verbose Logging
+Enables detailed logs of the renaming process.
 
 ```bash
 NameTidy clean -p ./test_dir -v
@@ -105,8 +117,8 @@ History file path: ./test_dir/.NameTidy_History
 2025/03/30 17:39:08 [INFO] File name cleanup completed.
 ```
 
-### Numbering Files (Numbered)
-This command adds a sequence number to file names. You can specify the number of digits or apply hierarchical numbering based on the directory structure.
+### Add Sequence Numbers
+Adds numerical prefixes to file names. Use -n to set digit length, and -H for hierarchical mode.
 
 ```bash
 NameTidy number -p ./test_dir -n 3
@@ -132,19 +144,22 @@ Renamed: ./test_dir/folder1/note.pdf → ./test_dir/folder1/002_note.pdf
 Renamed: ./test_dir/folder2/image.png → ./test_dir/folder2/001_image.png
 ```
 
-## Options
+## ⚙️ Options
 
-- clean: Cleans up the file names.
-- undo: Undoes the most recent rename operation.
-- -d: Displays the intended changes without applying them.
-- -v: Provides detailed log output.
-- number: Adds sequence numbers to the file names.
-  - -n <digits>: Specifies the number of digits for the sequence number.
-  - -n <digits> -H: Adds hierarchical numbering based on directory structure.
+| Option / Command      | Description |
+|-----------------------|-------------|
+| `clean`               | Cleans up file names (e.g., removes symbols, replaces spaces). |
+| `number`              | Adds sequence numbers to file names. |
+| `undo`                | Reverts the most recent operation. |
+| `-p <path>`           | (Required) Target directory to process. |
+| `-n <digits>`         | Sets the number of digits for sequence numbers (e.g., `-n 3` → 001, 002). |
+| `-H`                  | Enables hierarchical numbering by folder. |
+| `-d`                  | Dry run mode — preview changes without applying them. |
+| `-v`                  | Verbose output — shows logs during execution. |
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
-# GitHub Topics
+# 🔖 GitHub Topics
 [cli](https://github.com/topics/cli) [golang](https://github.com/topics/golang) [file-management](https://github.com/topics/file-management) [rename-files](https://github.com/topics/rename-files)
