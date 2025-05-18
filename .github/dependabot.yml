@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "gomod"
+    directory: "/" # go.mod のあるディレクトリ
+    schedule:
+      interval: "weekly" # daily, weekly, monthly など
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
