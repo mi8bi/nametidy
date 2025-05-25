@@ -1,0 +1,20 @@
+project_name: NameTidy
+
+builds:
+  - id: macos
+    main: ./main.go
+    goos: [darwin]
+    goarch: [amd64]
+    env:
+      - CGO_ENABLED=1
+
+archives:
+  - format: tar.gz
+    name_template: '{{ .ProjectName }}_{{ .Version }}_darwin_amd64'
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_macos_checksums.txt"
+
+release:
+  draft: false
+  prerelease: false

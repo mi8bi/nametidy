@@ -1,0 +1,20 @@
+project_name: NameTidy
+
+builds:
+  - id: linux
+    main: ./main.go
+    goos: [linux]
+    goarch: [amd64]
+    env:
+      - CGO_ENABLED=1
+
+archives:
+  - format: tar.gz
+    name_template: '{{ .ProjectName }}_{{ .Version }}_linux_amd64'
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_linux_checksums.txt"
+
+release:
+  draft: false
+  prerelease: false

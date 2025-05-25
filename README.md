@@ -13,8 +13,6 @@ See NameTidy in action:
 
 [![NameTidy_Demo002](https://asciinema.org/a/719898.svg)](https://asciinema.org/a/719898)
 
-**Status**: 🚧 *Under Development*
-
 ---
 
 ## 📦 Table of Contents

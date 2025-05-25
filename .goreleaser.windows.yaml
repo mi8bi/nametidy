@@ -1,0 +1,20 @@
+project_name: NameTidy
+
+builds:
+  - id: windows
+    main: ./main.go
+    goos: [windows]
+    goarch: [amd64]
+    env:
+      - CGO_ENABLED=1
+
+archives:
+  - format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_windows_amd64'
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_windows_checksums.txt"
+
+release:
+  draft: false
+  prerelease: false
