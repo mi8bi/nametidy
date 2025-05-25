@@ -15,9 +15,10 @@ See NameTidy in action:
 
 ---
 
-## 📦 Table of Contents
+## Table of Contents
 
-- [Installation](#installation)
+- [Download](#download)
+- [Build](#build)
 - [Usage](#usage)
   - [Clean Up Filenames](#clean-up-filenames)
   - [Undo Changes](#undo-changes)
@@ -29,7 +30,27 @@ See NameTidy in action:
 
 ---
 
-## 🛠️ Installation
+## Download
+
+You can download prebuilt binaries from the [GitHub Releases page](https://github.com/mi8bi/NameTidy/releases):
+
+1. Go to the [Releases](https://github.com/mi8bi/NameTidy/releases) page on GitHub.
+2. Find the latest release and download the binary file for your OS and architecture.
+3. Extract the archive if needed, for example:
+
+```bash
+tar -xzvf NameTidy_0.1.0_linux_amd64.tar.gz
+```
+
+4. Move the executable to a directory in your PATH, for example:
+
+```bash
+mv NameTidy /usr/local/bin/
+```
+
+5. Run NameTidy --help to verify installation.
+
+## Build
 
 NameTidy is written in Go. To install it locally:
 
@@ -48,7 +69,7 @@ go build
 ```
 
 
-## 🚀 Usage
+## Usage
 
 Organize and standardize file names in your target directory using intuitive subcommands.
 
@@ -155,9 +176,9 @@ Renamed: ./test_dir/folder2/image.png → ./test_dir/folder2/001_image.png
 | `-d`                  | Dry run mode — preview changes without applying them. |
 | `-v`                  | Verbose output — shows logs during execution. |
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
-# 🔖 GitHub Topics
+# GitHub Topics
 [cli](https://github.com/topics/cli) [golang](https://github.com/topics/golang) [file-management](https://github.com/topics/file-management) [rename-files](https://github.com/topics/rename-files)
