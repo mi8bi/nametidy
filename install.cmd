@@ -1,0 +1,240 @@
+@echo off
+setlocal enabledelayedexpansion
+
+:: Script to download and install the latest NameTidy binary for Windows
+
+echo NameTidy Installer for Windows
+echo ------------------------------
+
+:: --- Configuration ---
+set "BINARY_NAME=nametidy.exe"
+set "INSTALL_DIR=%USERPROFILE%\bin"
+set "RELEASE_BASE_URL=https://github.com/mi8bi/NameTidy/releases/latest/download"
+set "OS_NAME=windows"
+set "ARCH="
+set "MANUAL_MOVE_NEEDED=false"
+set "TEMP_DIR="
+
+:: --- Determine Architecture ---
+echo Detecting system architecture...
+if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+    set "ARCH=amd64"
+) else if "%PROCESSOR_ARCHITECTURE%"=="ARM64" (
+    set "ARCH=arm64"
+) else (
+    echo Error: Unsupported architecture: %PROCESSOR_ARCHITECTURE%. Only AMD64 and ARM64 are supported.
+    goto :error_exit
+)
+echo Detected Architecture: %ARCH%
+
+:: Construct the download URL
+set "ASSET_NAME=NameTidy_%OS_NAME%_%ARCH%.zip"
+set "DOWNLOAD_URL=%RELEASE_BASE_URL%/%ASSET_NAME%"
+
+echo Download URL: %DOWNLOAD_URL%
+
+:: --- Temporary Download Path ---
+:: Create a temporary directory for downloads
+set "TEMP_DIR=%TEMP%\NameTidy_Install_%RANDOM%"
+mkdir "%TEMP_DIR%"
+if not exist "%TEMP_DIR%\" (
+    echo Error: Failed to create temporary directory: %TEMP_DIR%
+    goto :error_exit
+)
+echo Temporary directory created: %TEMP_DIR%
+set "ARCHIVE_PATH=%TEMP_DIR%\%ASSET_NAME%"
+set "EXTRACTED_BINARY_PATH=%TEMP_DIR%\%BINARY_NAME%"
+
+:: --- Download Logic ---
+echo.
+echo Downloading NameTidy release asset...
+
+:: Check for curl
+where curl >nul 2>nul
+if %errorlevel% equ 0 (
+    echo Found curl. Attempting download...
+    curl -LSsf -o "%ARCHIVE_PATH%" "%DOWNLOAD_URL%"
+    if errorlevel 1 (
+        echo Error: curl download failed. Check URL or network connection.
+        echo Asset might not be available for %OS_NAME%/%ARCH%.
+        goto :error_exit
+    )
+    echo Download successful using curl.
+    goto :extract_logic
+)
+
+:: Check for bitsadmin
+where bitsadmin >nul 2>nul
+if %errorlevel% equ 0 (
+    echo Found bitsadmin. Attempting download...
+    bitsadmin /transfer NameTidyDownloadJob /download /priority NORMAL "%DOWNLOAD_URL%" "%ARCHIVE_PATH%"
+    if errorlevel 1 (
+        echo Error: bitsadmin download failed. Check URL or network connection.
+        echo Asset might not be available for %OS_NAME%/%ARCH%.
+        goto :error_exit
+    )
+    echo Download successful using bitsadmin.
+    goto :extract_logic
+)
+
+echo Error: Neither curl nor bitsadmin found.
+echo Please install curl (recommended: https://curl.se/windows/) or download the file manually:
+echo %DOWNLOAD_URL%
+echo And place %ASSET_NAME% in "%TEMP_DIR%"
+pause
+if not exist "%ARCHIVE_PATH%" (
+    echo Manual download not completed or file not found at expected location.
+    goto :error_exit
+)
+echo Assuming manual download completed.
+
+:extract_logic
+:: --- Extraction Logic ---
+echo.
+echo Extracting %BINARY_NAME% from "%ARCHIVE_PATH%"...
+
+:: Check for tar (bsdtar, included in modern Windows)
+where tar >nul 2>nul
+if %errorlevel% equ 0 (
+    echo Found tar. Attempting extraction...
+    :: tar -xf <zipfile> -C <output_dir> <file_to_extract>
+    tar -xf "%ARCHIVE_PATH%" -C "%TEMP_DIR%" "%BINARY_NAME%" >nul 2>nul
+    if errorlevel 1 (
+        echo Error: tar extraction failed. Archive might be corrupt or %BINARY_NAME% not in archive root.
+        goto :error_exit
+    )
+    if not exist "%EXTRACTED_BINARY_PATH%" (
+        echo Error: tar ran but %BINARY_NAME% not found at "%EXTRACTED_BINARY_PATH%".
+        echo It might not be at the root of the zip file.
+        goto :error_exit
+    )
+    echo Extraction successful using tar.
+    goto :install_logic
+)
+
+:: Check for PowerShell Expand-Archive
+where powershell >nul 2>nul
+if %errorlevel% equ 0 (
+    echo Found PowerShell. Attempting extraction...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Expand-Archive -Path '%ARCHIVE_PATH%' -DestinationPath '%TEMP_DIR%' -Force } catch { Write-Error $_; exit 1 }"
+    if errorlevel 1 (
+        echo Error: PowerShell Expand-Archive failed. Archive might be corrupt.
+        goto :error_exit
+    )
+    :: Expand-Archive extracts everything, check if our binary is there
+    if not exist "%EXTRACTED_BINARY_PATH%" (
+        echo Error: PowerShell Expand-Archive ran but %BINARY_NAME% not found at "%EXTRACTED_BINARY_PATH%".
+        echo The ZIP file might not directly contain %BINARY_NAME% at its root.
+        goto :error_exit
+    )
+    echo Extraction successful using PowerShell.
+    goto :install_logic
+)
+
+echo Error: Neither tar nor PowerShell Expand-Archive found/worked.
+echo Please manually extract %BINARY_NAME% from "%ARCHIVE_PATH%"
+echo and place it at: "%EXTRACTED_BINARY_PATH%"
+pause
+if not exist "%EXTRACTED_BINARY_PATH%" (
+    echo Manual extraction not completed or file not found at expected location.
+    goto :error_exit
+)
+echo Assuming manual extraction completed.
+
+:install_logic
+:: --- Installation Logic ---
+echo.
+echo Installing %BINARY_NAME%...
+
+:: Create installation directory if it doesn't exist
+if not exist "%INSTALL_DIR%\" (
+    echo Creating installation directory: "%INSTALL_DIR%"
+    mkdir "%INSTALL_DIR%"
+    if errorlevel 1 (
+        echo Error: Failed to create installation directory: "%INSTALL_DIR%". Check permissions.
+        goto :error_exit
+    )
+)
+
+set "FINAL_INSTALL_PATH=%INSTALL_DIR%\%BINARY_NAME%"
+
+:: Check if binary already exists and prompt for overwrite
+if exist "%FINAL_INSTALL_PATH%" (
+    echo Warning: %BINARY_NAME% already exists at "%FINAL_INSTALL_PATH%".
+    choice /C YN /M "Do you want to overwrite it?"
+    if errorlevel 2 (
+        echo Overwrite cancelled by user. Exiting.
+        goto :user_exit_graceful
+    )
+    echo Proceeding with overwrite...
+)
+
+:: Move the binary
+echo Moving %BINARY_NAME% to "%FINAL_INSTALL_PATH%"...
+move /Y "%EXTRACTED_BINARY_PATH%" "%FINAL_INSTALL_PATH%" >nul
+if errorlevel 1 (
+    echo Error: Failed to move %BINARY_NAME% to "%FINAL_INSTALL_PATH%". Check permissions.
+    echo The extracted binary is still available at "%EXTRACTED_BINARY_PATH%"
+    set "MANUAL_MOVE_NEEDED=true"
+    goto :path_logic_or_skip
+)
+echo %BINARY_NAME% successfully installed to "%FINAL_INSTALL_PATH%".
+
+:: --- PATH Update ---
+:path_logic_or_skip
+if "%MANUAL_MOVE_NEEDED%"=="true" (
+    echo Skipping PATH update as installation was not fully automatic.
+    goto :final_message
+)
+
+echo.
+echo Attempting to add "%INSTALL_DIR%" to your User PATH...
+:: Important: setx modifies the persistent (registry) PATH, not the current session's PATH.
+:: %PATH% here refers to the current session's PATH.
+:: This command appends INSTALL_DIR to the user's PATH. If it's already there, it will be duplicated.
+:: A more sophisticated script might check for existence first via reg query.
+setx PATH "%PATH%;%INSTALL_DIR%"
+if errorlevel 1 (
+    echo Warning: Failed to automatically add "%INSTALL_DIR%" to PATH using setx.
+    echo This can happen if the PATH is too long or due to permissions.
+    echo You may need to add it manually through System Properties (Environment Variables).
+) else (
+    echo "%INSTALL_DIR%" has been scheduled to be added to your User PATH.
+    echo This change will take effect in new command prompts.
+    echo You might need to restart your current prompt, or log out and log back in.
+)
+
+:final_message
+echo.
+if "%MANUAL_MOVE_NEEDED%"=="true" (
+    echo Installation requires manual intervention.
+    echo Please manually move %BINARY_NAME% from "%EXTRACTED_BINARY_PATH%"
+    echo to "%INSTALL_DIR%"
+    echo Then, ensure "%INSTALL_DIR%" is in your PATH.
+    echo The temporary files (including the extracted binary at "%EXTRACTED_BINARY_PATH%") will be kept.
+    echo Please clean up "%TEMP_DIR%" manually after moving the binary.
+    set "TEMP_DIR=" :: Prevent cleanup routine from deleting it
+    goto :eof
+)
+
+echo Installation complete!
+echo Please open a new command prompt to use %BINARY_NAME%.
+call :cleanup_and_exit
+
+:user_exit_graceful
+echo Exiting script.
+call :cleanup_and_exit
+
+:error_exit
+echo An error occurred. Installation aborted.
+call :cleanup_and_exit
+
+:cleanup_and_exit
+if defined TEMP_DIR if exist "%TEMP_DIR%\" (
+    echo Cleaning up temporary directory: "%TEMP_DIR%"
+    rmdir /S /Q "%TEMP_DIR%"
+    set "TEMP_DIR="
+)
+goto :eof
+
+endlocal
