@@ -81,7 +81,7 @@ func TestDryRun(t *testing.T) {
 	}
 
 	// 実際の出力からパスを削除
-	actual := strings.Replace(string(output), testDir+"\\", "", -1)
+	actual := strings.Replace(string(output), testDir+string(os.PathSeparator), "", -1)
 
 	expectedOutput := []string{
 		"[DRY-RUN] IMG 2023 01 01.JPG → IMG_2023_01_01.JPG",
@@ -151,7 +151,7 @@ func TestUndoDryRun(t *testing.T) {
 	}
 
 	// 実際の出力からパスを削除
-	actual := strings.Replace(string(output), testDir+"\\", "", -1)
+	actual := strings.Replace(string(output), testDir+string(os.PathSeparator), "", -1)
 
 	expectedOutput := []string{
 		"[DRY-RUN] IMG_2023_01_01.JPG → IMG 2023 01 01.JPG",
