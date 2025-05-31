@@ -5,6 +5,12 @@
 NameTidy is a fast and flexible command-line tool for cleaning and renaming file names.  
 It supports operations such as filename cleanup, adding sequence numbers, and undoing changes — all with a simple and intuitive interface.
 
+[![Build Status](https://github.com/mi8bi/NameTidy/actions/workflows/test.yml/badge.svg)](https://github.com/mi8bi/NameTidy/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mi8bi/NameTidy)](https://goreportcard.com/report/github.com/mi8bi/NameTidy)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Latest Release](https://img.shields.io/github/v/release/mi8bi/NameTidy)](https://github.com/mi8bi/NameTidy/releases/latest)
+[![GitHub Stars](https://img.shields.io/github/stars/mi8bi/NameTidy?style=social)](https://github.com/mi8bi/NameTidy/stargazers)
+
 ---
 
 ## 📽️ Demo
