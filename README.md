@@ -23,7 +23,11 @@ See NameTidy in action:
 
 ## Table of Contents
 
-- [Download](#download)
+- [Automated Installation](#automated-installation)
+  - [For Linux/macOS (using `install.sh`)](#for-linuxmacos-using-installsh)
+  - [For Windows Command Prompt (using `install.cmd`)](#for-windows-command-prompt-using-installcmd)
+  - [For Windows PowerShell (using `install.ps1`)](#for-windows-powershell-using-installps1)
+- [Manual Installation](#manual-installation)
 - [Build](#build)
 - [Usage](#usage)
   - [Clean Up Filenames](#clean-up-filenames)
@@ -36,25 +40,95 @@ See NameTidy in action:
 
 ---
 
-## Download
+## Automated Installation
+
+You can use the following scripts to automate the installation of NameTidy. These scripts will detect your system's architecture and download the appropriate binary.
+
+### For Linux/macOS (using `install.sh`)
+
+1.  **Download the script (it will be saved as `install.sh` in your current directory):**
+    ```bash
+    # Using curl:
+    curl -LO https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
+    # Or using wget:
+    # wget https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
+
+2.  **Make it executable:**
+    ```bash
+    chmod +x install.sh
+    ```
+
+3.  **Run the installer:**
+    ```bash
+    ./install.sh
+    ```
+    This script installs `nametidy` to `/usr/local/bin`. It may require `sudo` privileges if your user doesn't have write access to this directory.
+
+### For Windows Command Prompt (using `install.cmd`)
+
+1.  **Download the script:**
+    You can download `install.cmd` directly from the repository (e.g., save it to your `Downloads` folder):
+    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.cmd](https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.cmd)
+    (Right-click the link and select "Save link as..." or "Save As...")
+
+2.  **Run the installer:**
+    Open Command Prompt (`cmd.exe`). Navigate to the directory where you saved `install.cmd` (e.g., `Downloads`) and run it:
+    ```cmd
+    cd C:\Users\YourUser\Downloads
+    install.cmd
+    ```
+    Or, if `install.cmd` is in your current directory:
+    ```cmd
+    install.cmd
+    ```
+    This script installs `nametidy.exe` to `%USERPROFILE%\bin` and attempts to add this directory to your User PATH environment variable. PATH changes will apply to new Command Prompt sessions.
+
+### For Windows PowerShell (using `install.ps1`)
+
+1.  **Download the script:**
+    You can download `install.ps1` directly from the repository (e.g., save it to your `Downloads` folder):
+    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.ps1](https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.ps1)
+    (Right-click the link and select "Save link as..." or "Save As...")
+
+2.  **Run the installer:**
+    Open PowerShell. Navigate to the directory where you saved `install.ps1` (e.g., `Downloads`). You may need to adjust your execution policy to run the script.
+    Example:
+    ```powershell
+    cd C:\Users\YourUser\Downloads
+    # Then run one of the following:
+    ```
+    To run the script for the current session without changing global policy:
+    ```powershell
+    PowerShell -ExecutionPolicy Bypass -File .\install.ps1
+    ```
+    Alternatively, from within that PowerShell prompt:
+    ```powershell
+    # Temporarily bypass execution policy for the current process
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    .\install.ps1
+    ```
+    This script installs `nametidy.exe` to `$env:USERPROFILE\bin` and attempts to add this directory to your User PATH environment variable persistently. PATH changes will apply to new PowerShell sessions or after restarting Windows.
+
+---
+
+## Manual Installation
 
 You can download prebuilt binaries from the [GitHub Releases page](https://github.com/mi8bi/NameTidy/releases):
 
 1. Go to the [Releases](https://github.com/mi8bi/NameTidy/releases) page on GitHub.
-2. Find the latest release and download the binary file for your OS and architecture.
-3. Extract the archive if needed, for example:
-
-```bash
-tar -xzvf NameTidy_0.1.0_linux_amd64.tar.gz
-```
-
-4. Move the executable to a directory in your PATH, for example:
-
-```bash
-mv NameTidy /usr/local/bin/
-```
-
-5. Run NameTidy --help to verify installation.
+2. Find the latest release and download the binary file for your OS and architecture (e.g., `NameTidy_windows_amd64.zip` or `NameTidy_linux_amd64.tar.gz`).
+3. Extract the archive. For `.tar.gz` files on Linux/macOS:
+   ```bash
+   tar -xzvf NameTidy_VERSION_OS_ARCH.tar.gz
+   ```
+   For `.zip` files on Windows, you can use File Explorer's built-in "Extract All..." option.
+4. Move the extracted `nametidy` (or `nametidy.exe` on Windows) executable to a directory in your system's PATH.
+   - For Linux/macOS, a common location is `/usr/local/bin/`:
+     ```bash
+     sudo mv nametidy /usr/local/bin/
+     ```
+   - For Windows, you might choose a directory like `%USERPROFILE%\bin\` and ensure this directory is added to your PATH environment variable.
+5. Run `nametidy --help` (or `nametidy.exe --help` on Windows) to verify the installation.
 
 ## Build
 
