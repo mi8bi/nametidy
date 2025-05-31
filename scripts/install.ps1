@@ -115,17 +115,50 @@ try {
     }
 
     # --- Extraction ---
-    Write-Host "Extracting $BinaryName from $ArchiveFilePath..."
+    Write-Host "Extracting archive from $ArchiveFilePath to $TempDir..."
     try {
-        # Expand-Archive extracts all files. We assume nametidy.exe is at the root of the zip.
         Expand-Archive -Path $ArchiveFilePath -DestinationPath $TempDir -Force
-        if (-not (Test-Path $ExtractedBinaryPath)) {
-            throw "$BinaryName not found in the extracted files at $TempDir. The archive might not contain '$BinaryName' at its root."
+        Write-Host "Archive extraction completed."
+
+        # Search for the binary, trying possible names
+        # $BinaryName is "nametidy.exe" (defined in Configuration)
+        $PossibleNames = @($BinaryName, "NameTidy.exe")
+        $FoundBinaryInfo = $null
+
+        foreach ($name_to_find in $PossibleNames) {
+            Write-Host "Searching for binary '$name_to_find' in '$TempDir'..."
+            # Get-ChildItem -File ensures we only get files, -Recurse searches subdirectories.
+            # Using -Filter for efficiency if supported, otherwise -Include. For simple names, -Filter is fine.
+            $foundFiles = Get-ChildItem -Path $TempDir -Recurse -File -Filter $name_to_find -ErrorAction SilentlyContinue
+
+            if ($foundFiles) {
+                # Take the first one if multiple are somehow found (e.g. in different subdirs or with same name)
+                $FoundBinaryInfo = $foundFiles | Select-Object -First 1
+                if ($FoundBinaryInfo) {
+                    # Update $ExtractedBinaryPath which was initially set to $TempDir\$BinaryName
+                    $ExtractedBinaryPath = $FoundBinaryInfo.FullName
+                    Write-Host "Found executable binary at: $ExtractedBinaryPath"
+                    break # Exit foreach loop as we found our binary
+                }
+            }
         }
-        Write-Host "Extraction successful. $BinaryName is at $ExtractedBinaryPath"
+
+        if (-not $FoundBinaryInfo) {
+            Write-Host "Listing contents of '$TempDir' (top level):"
+            Get-ChildItem -Path $TempDir -Depth 0 | ForEach-Object { Write-Host "  $($_.Name)" } # Depth 0 for top level
+            Write-Host "Listing contents of '$TempDir' (recursive, files only, relative paths):"
+            Get-ChildItem -Path $TempDir -Recurse -File | ForEach-Object { Write-Host "  $($_.FullName.Substring($TempDir.Length).TrimStart('\'))" }
+            throw "Could not find '$($PossibleNames -join "' or '")' in the extracted files at '$TempDir'."
+        }
+        # $ExtractedBinaryPath is now updated to the actual found binary path.
+        # The script will proceed to use this updated $ExtractedBinaryPath for installation.
+        # If "NameTidy.exe" was found, $ExtractedBinaryPath points to it.
+        # The $FinalInstallPath is $InstallDir\$BinaryName ("nametidy.exe").
+        # So, Move-Item will effectively rename "NameTidy.exe" to "nametidy.exe" if that was what was found. This is desired.
     }
     catch {
-        throw "Extraction failed. Error: $($_.Exception.Message). The archive might be corrupt or incompatible."
+        # This catch block handles errors from Expand-Archive or the 'throw' if binary not found.
+        throw "Extraction or binary search failed. Error: $($_.Exception.Message). The archive might be corrupt, incompatible, or the binary is missing/not found."
     }
 
     # --- Installation ---
