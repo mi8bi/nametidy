@@ -27,9 +27,73 @@ if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
 )
 echo Detected Architecture: %ARCH%
 
+:: --- Fetch Latest Release Information ---
+echo.
+echo Fetching latest release information...
+set "LATEST_RELEASE_INFO_URL=https://api.github.com/repos/mi8bi/NameTidy/releases/latest"
+set "TEMP_JSON_FILE=%TEMP%\release_info_%RANDOM%.json"
+set "TAG_NAME="
+set "VERSION="
+
+:: Check for curl
+where curl >nul 2>nul
+if %errorlevel% neq 0 (
+    echo Error: curl is required to fetch release information but not found.
+    echo Please install curl (e.g., from https://curl.se/windows/) and ensure it's in your PATH.
+    goto :error_exit
+)
+
+:: Fetch release info using curl
+echo Fetching from %LATEST_RELEASE_INFO_URL% ...
+curl -LsS -o "%TEMP_JSON_FILE%" "%LATEST_RELEASE_INFO_URL%"
+if errorlevel 1 (
+    echo Error: Failed to download release information from %LATEST_RELEASE_INFO_URL%.
+    if exist "%TEMP_JSON_FILE%" del "%TEMP_JSON_FILE%"
+    goto :error_exit
+)
+
+if not exist "%TEMP_JSON_FILE%" (
+    echo Error: Release information file was not created at "%TEMP_JSON_FILE%".
+    goto :error_exit
+)
+
+:: Parse tag_name from JSON. This is fragile; assumes "tag_name": "vX.Y.Z" format.
+FOR /F "tokens=2 delims=:," %%g IN ('findstr /C:"\"tag_name\":" "%TEMP_JSON_FILE%"') DO (
+    FOR /F "tokens=1 delims= " %%h IN ("%%g") DO (
+        set "TAG_NAME=%%~h"
+    )
+)
+
+if defined TEMP_JSON_FILE if exist "%TEMP_JSON_FILE%" (
+    del "%TEMP_JSON_FILE%"
+)
+
+if not defined TAG_NAME (
+    echo Error: Could not parse tag_name from release information.
+    echo The format of the release JSON may have changed or the file was empty.
+    goto :error_exit
+)
+:: Remove potential surrounding quotes from TAG_NAME
+set "TAG_NAME=%TAG_NAME:"=%"
+echo Latest release tag: %TAG_NAME%
+
+:: Remove 'v' prefix from tag to get version. Example: v0.1.0 -> 0.1.0
+if "%TAG_NAME:~0,1%"=="v" (
+    set "VERSION=%TAG_NAME:~1%"
+) else (
+    set "VERSION=%TAG_NAME%"
+)
+
+if not defined VERSION (
+    echo Error: Could not extract version from tag '%TAG_NAME%'.
+    goto :error_exit
+)
+echo Detected version: %VERSION%
+
 :: Construct the download URL
-set "ASSET_NAME=NameTidy_%OS_NAME%_%ARCH%.zip"
-set "DOWNLOAD_URL=%RELEASE_BASE_URL%/%ASSET_NAME%"
+set "RELEASE_DOWNLOAD_URL_BASE=https://github.com/mi8bi/NameTidy/releases/download"
+set "ASSET_NAME=NameTidy_%VERSION%_%OS_NAME%_%ARCH%.zip"
+set "DOWNLOAD_URL=%RELEASE_DOWNLOAD_URL_BASE%/%TAG_NAME%/%ASSET_NAME%"
 
 echo Download URL: %DOWNLOAD_URL%
 
@@ -91,55 +155,93 @@ echo Assuming manual download completed.
 :extract_logic
 :: --- Extraction Logic ---
 echo.
-echo Extracting %BINARY_NAME% from "%ARCHIVE_PATH%"...
+echo Extracting archive from "%ARCHIVE_PATH%" into "%TEMP_DIR%"...
+set "EXTRACTION_ATTEMPTED=false"
+set "EXTRACTION_SUCCESSFUL=false"
 
 :: Check for tar (bsdtar, included in modern Windows)
-where tar >nul 2>nul
-if %errorlevel% equ 0 (
-    echo Found tar. Attempting extraction...
-    :: tar -xf <zipfile> -C <output_dir> <file_to_extract>
-    tar -xf "%ARCHIVE_PATH%" -C "%TEMP_DIR%" "%BINARY_NAME%" >nul 2>nul
-    if errorlevel 1 (
-        echo Error: tar extraction failed. Archive might be corrupt or %BINARY_NAME% not in archive root.
-        goto :error_exit
+if not %EXTRACTION_SUCCESSFUL%==true (
+    where tar >nul 2>nul
+    if %errorlevel% equ 0 (
+        set "EXTRACTION_ATTEMPTED=true"
+        echo Found tar. Attempting extraction...
+        tar -xf "%ARCHIVE_PATH%" -C "%TEMP_DIR%" >nul 2>nul
+        if errorlevel 1 (
+            echo Warning: tar extraction may have failed or reported errors (errorlevel %errorlevel%).
+            echo Will proceed to search for the binary anyway.
+            :: Don't set EXTRACTION_SUCCESSFUL to true here if tar reports an error,
+            :: but allow search to proceed as tar might still have extracted some files.
+        ) else (
+            echo Extraction with tar seems complete.
+            set "EXTRACTION_SUCCESSFUL=true"
+        )
+        goto :search_for_binary_after_extraction
     )
-    if not exist "%EXTRACTED_BINARY_PATH%" (
-        echo Error: tar ran but %BINARY_NAME% not found at "%EXTRACTED_BINARY_PATH%".
-        echo It might not be at the root of the zip file.
-        goto :error_exit
-    )
-    echo Extraction successful using tar.
-    goto :install_logic
 )
 
 :: Check for PowerShell Expand-Archive
-where powershell >nul 2>nul
-if %errorlevel% equ 0 (
-    echo Found PowerShell. Attempting extraction...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Expand-Archive -Path '%ARCHIVE_PATH%' -DestinationPath '%TEMP_DIR%' -Force } catch { Write-Error $_; exit 1 }"
-    if errorlevel 1 (
-        echo Error: PowerShell Expand-Archive failed. Archive might be corrupt.
-        goto :error_exit
+if not %EXTRACTION_SUCCESSFUL%==true (
+    where powershell >nul 2>nul
+    if %errorlevel% equ 0 (
+        set "EXTRACTION_ATTEMPTED=true"
+        echo Found PowerShell. Attempting extraction...
+        powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Expand-Archive -Path '%ARCHIVE_PATH%' -DestinationPath '%TEMP_DIR%' -Force } catch { Write-Error $_; exit 1 }"
+        if errorlevel 1 (
+            echo Error: PowerShell Expand-Archive failed. Archive might be corrupt.
+            :: Unlike tar, if PowerShell fails, it's usually a more definite failure.
+            goto :error_exit
+        )
+        echo Extraction successful using PowerShell.
+        set "EXTRACTION_SUCCESSFUL=true"
+        goto :search_for_binary_after_extraction
     )
-    :: Expand-Archive extracts everything, check if our binary is there
-    if not exist "%EXTRACTED_BINARY_PATH%" (
-        echo Error: PowerShell Expand-Archive ran but %BINARY_NAME% not found at "%EXTRACTED_BINARY_PATH%".
-        echo The ZIP file might not directly contain %BINARY_NAME% at its root.
-        goto :error_exit
-    )
-    echo Extraction successful using PowerShell.
-    goto :install_logic
 )
 
-echo Error: Neither tar nor PowerShell Expand-Archive found/worked.
-echo Please manually extract %BINARY_NAME% from "%ARCHIVE_PATH%"
-echo and place it at: "%EXTRACTED_BINARY_PATH%"
-pause
-if not exist "%EXTRACTED_BINARY_PATH%" (
-    echo Manual extraction not completed or file not found at expected location.
+:search_for_binary_after_extraction
+if not "%EXTRACTION_ATTEMPTED%"=="true" (
+    echo Error: Neither tar nor PowerShell Expand-Archive found. Cannot automate extraction.
+    echo Please manually extract %BINARY_NAME% from "%ARCHIVE_PATH%"
+    echo into folder: "%TEMP_DIR%"
+    pause
+    echo Resuming to search for binary after manual extraction attempt...
+    :: After pause, script will proceed to search. User must have placed files in TEMP_DIR.
+)
+
+:: --- Search for the binary ---
+echo.
+echo Searching for the binary in "%TEMP_DIR%"...
+set "FOUND_BINARY_PATH="
+:: %BINARY_NAME% is "nametidy.exe"
+set "POSSIBLE_BINARY_NAMES=%BINARY_NAME% NameTidy.exe"
+
+FOR %%N IN (%POSSIBLE_BINARY_NAMES%) DO (
+    IF not defined FOUND_BINARY_PATH (
+        echo Trying to find %%N...
+        FOR /F "delims=" %%F IN ('dir /s /b "%TEMP_DIR%\%%N" 2^>nul') DO (
+            IF not defined FOUND_BINARY_PATH (
+                echo Found binary at: "%%F"
+                set "FOUND_BINARY_PATH=%%F"
+            )
+        )
+    )
+)
+
+IF not defined FOUND_BINARY_PATH (
+    echo Error: Could not find %BINARY_NAME% or NameTidy.exe in the extracted files at "%TEMP_DIR%".
+    echo Listing contents of "%TEMP_DIR%" (recursive):
+    dir "%TEMP_DIR%" /s /b /A
     goto :error_exit
 )
-echo Assuming manual extraction completed.
+
+:: Update EXTRACTED_BINARY_PATH to the actual found path
+set "EXTRACTED_BINARY_PATH=%FOUND_BINARY_PATH%"
+echo Binary to be installed: %EXTRACTED_BINARY_PATH%
+:: Note: The original EXTRACTED_BINARY_PATH was %TEMP_DIR%\%BINARY_NAME%. This update is crucial.
+:: The FINAL_INSTALL_PATH is %INSTALL_DIR%\%BINARY_NAME%.
+:: If "NameTidy.exe" is found, it will be moved and renamed to "nametidy.exe" in the install directory. This is desired.
+
+goto :install_logic :: Proceed to installation
+
 
 :install_logic
 :: --- Installation Logic ---

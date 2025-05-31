@@ -106,10 +106,48 @@ esac
 echo "Detected OS: $OS"
 echo "Detected Architecture: $ARCH"
 
-# Construct the download URL
-RELEASE_BASE_URL="https://github.com/mi8bi/NameTidy/releases/latest/download"
-ASSET_NAME="NameTidy_${OS}_${ARCH}.tar.gz"
-DOWNLOAD_URL="${RELEASE_BASE_URL}/${ASSET_NAME}"
+# Fetch the latest release tag and version
+echo "Fetching latest release information..."
+LATEST_RELEASE_INFO_URL="https://api.github.com/repos/mi8bi/NameTidy/releases/latest"
+
+# Attempt to fetch tag_name using curl and grep/sed
+# This extracts the value of "tag_name": "vX.Y.Z"
+TAG_NAME=$(curl -LsS "$LATEST_RELEASE_INFO_URL" | grep '"tag_name":' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')
+
+if [ -z "$TAG_NAME" ]; then
+    echo "Error: Could not fetch the latest release tag_name from $LATEST_RELEASE_INFO_URL."
+    echo "Please check your internet connection and if the repository/releases are accessible."
+    # Try to see if jq is available for a more robust parsing as a fallback
+    if command_exists jq; then
+        echo "Attempting with jq..."
+        TAG_NAME=$(curl -LsS "$LATEST_RELEASE_INFO_URL" | jq -r .tag_name)
+         if [ -z "$TAG_NAME" ] || [ "$TAG_NAME" == "null" ]; then
+            echo "Error: jq also failed to fetch or parse tag_name."
+            exit 1
+         fi
+    else
+        echo "jq not available. Could not parse release information automatically."
+        exit 1
+    fi
+fi
+
+echo "Latest release tag: $TAG_NAME"
+
+# Remove 'v' prefix from tag to get version
+VERSION=$(echo "$TAG_NAME" | sed 's/^v//')
+if [ -z "$VERSION" ]; then
+    echo "Error: Could not extract version from tag '$TAG_NAME'."
+    exit 1
+fi
+echo "Detected version: $VERSION"
+
+# Construct the download URL using the fetched tag and version
+# Note: For Windows, the script might use .zip. This script is .sh, so .tar.gz is appropriate.
+# The ASSET_NAME now includes the VERSION.
+RELEASE_DOWNLOAD_URL_BASE="https://github.com/mi8bi/NameTidy/releases/download"
+ASSET_NAME="NameTidy_${VERSION}_${OS}_${ARCH}.tar.gz"
+DOWNLOAD_URL="${RELEASE_DOWNLOAD_URL_BASE}/${TAG_NAME}/${ASSET_NAME}"
+# Example: https://github.com/mi8bi/NameTidy/releases/download/v0.1.0/NameTidy_0.1.0_linux_amd64.tar.gz
 
 echo "Constructed download URL: $DOWNLOAD_URL"
 
@@ -132,14 +170,67 @@ if ! command_exists tar; then
     exit 1
 fi
 
-# Extracting only the 'nametidy' binary from the archive to the temp directory's root
-if ! tar -xzf "$ARCHIVE_PATH" -C "$TMP_DIR" "$BINARY_NAME"; then
-    echo "Error: Failed to extract '$BINARY_NAME' from '$ARCHIVE_PATH'."
-    echo "The archive might be corrupted, the binary name/path inside the archive is unexpected,"
-    echo "or the binary for your system ($OS/$ARCH) might not be correctly packaged as '$BINARY_NAME'."
+echo "Extracting archive contents..."
+if ! tar -xzf "$ARCHIVE_PATH" -C "$TMP_DIR"; then
+    echo "Error: Failed to extract archive '$ARCHIVE_PATH' to '$TMP_DIR'."
+    echo "The archive might be corrupted."
     exit 1
 fi
-echo "Binary '$BINARY_NAME' extracted to '$EXTRACTED_BINARY_PATH'"
+echo "Archive extracted to '$TMP_DIR'."
+
+# Search for the binary, first 'nametidy', then 'NameTidy'
+# We look for an executable file.
+FOUND_BINARY_PATH=""
+# $BINARY_NAME is "nametidy" as defined in Global Variables
+POSSIBLE_NAMES=("$BINARY_NAME" "NameTidy")
+
+for name_to_find in "${POSSIBLE_NAMES[@]}"; do
+    echo "Searching for executable binary '$name_to_find' in '$TMP_DIR'..."
+    # Use find to locate the executable file. -print -quit ensures we only get one if multiple exist.
+    # Redirect stderr to /dev/null for -executable if user doesn't own files, though less likely in TMP_DIR.
+    # -path '*/.DS_Store' -prune -o handles macOS specific files if any present in archive
+    found_path=$(find "$TMP_DIR" -path '*/.DS_Store' -prune -o -type f -name "$name_to_find" -print -quit 2>/dev/null)
+
+    if [ -n "$found_path" ]; then
+        # Found a file with the name, now check if it's executable or can be made executable
+        if [ -x "$found_path" ]; then
+             FOUND_BINARY_PATH="$found_path"
+             echo "Found executable binary at: $FOUND_BINARY_PATH"
+             break
+        else
+            echo "Found file '$found_path' but it is not executable. Attempting to make it executable..."
+            chmod +x "$found_path"
+            if [ -x "$found_path" ]; then
+                echo "Made '$found_path' executable."
+                FOUND_BINARY_PATH="$found_path"
+                echo "Found executable binary at: $FOUND_BINARY_PATH"
+                break
+            else
+                # If chmod failed, this path is not viable. Continue search.
+                echo "Could not make '$found_path' executable. Searching further..."
+            fi
+        fi
+    fi
+done
+
+if [ -z "$FOUND_BINARY_PATH" ]; then
+    echo "Error: Could not find the '$BINARY_NAME' or 'NameTidy' executable binary in the extracted files at '$TMP_DIR'."
+    echo "Archive contents (top level):"
+    ls -Al "$TMP_DIR"
+    # More detailed listing if needed:
+    # echo "Archive contents (full):"
+    # find "$TMP_DIR" -ls
+    exit 1
+fi
+
+# Update EXTRACTED_BINARY_PATH to the actual found path
+EXTRACTED_BINARY_PATH="$FOUND_BINARY_PATH"
+# The rest of the script uses $EXTRACTED_BINARY_PATH for chmod, mv, etc.
+# Note: The global BINARY_NAME variable is still "nametidy".
+# If "NameTidy" was found, INSTALLED_BINARY_PATH (".../nametidy") would be different from the found name.
+# The script later does `mv "$EXTRACTED_BINARY_PATH" "$INSTALLED_BINARY_PATH"`.
+# This means if "NameTidy" is found, it will be moved and renamed to "nametidy" in the install directory. This is the desired behavior.
+echo "Using binary found at '$EXTRACTED_BINARY_PATH'"
 
 # Clean up downloaded archive
 rm "$ARCHIVE_PATH"
