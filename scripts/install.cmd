@@ -27,9 +27,73 @@ if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
 )
 echo Detected Architecture: %ARCH%
 
+:: --- Fetch Latest Release Information ---
+echo.
+echo Fetching latest release information...
+set "LATEST_RELEASE_INFO_URL=https://api.github.com/repos/mi8bi/NameTidy/releases/latest"
+set "TEMP_JSON_FILE=%TEMP%\release_info_%RANDOM%.json"
+set "TAG_NAME="
+set "VERSION="
+
+:: Check for curl
+where curl >nul 2>nul
+if %errorlevel% neq 0 (
+    echo Error: curl is required to fetch release information but not found.
+    echo Please install curl (e.g., from https://curl.se/windows/) and ensure it's in your PATH.
+    goto :error_exit
+)
+
+:: Fetch release info using curl
+echo Fetching from %LATEST_RELEASE_INFO_URL% ...
+curl -LsS -o "%TEMP_JSON_FILE%" "%LATEST_RELEASE_INFO_URL%"
+if errorlevel 1 (
+    echo Error: Failed to download release information from %LATEST_RELEASE_INFO_URL%.
+    if exist "%TEMP_JSON_FILE%" del "%TEMP_JSON_FILE%"
+    goto :error_exit
+)
+
+if not exist "%TEMP_JSON_FILE%" (
+    echo Error: Release information file was not created at "%TEMP_JSON_FILE%".
+    goto :error_exit
+)
+
+:: Parse tag_name from JSON. This is fragile; assumes "tag_name": "vX.Y.Z" format.
+FOR /F "tokens=2 delims=:," %%g IN ('findstr /C:"\"tag_name\":" "%TEMP_JSON_FILE%"') DO (
+    FOR /F "tokens=1 delims= " %%h IN ("%%g") DO (
+        set "TAG_NAME=%%~h"
+    )
+)
+
+if defined TEMP_JSON_FILE if exist "%TEMP_JSON_FILE%" (
+    del "%TEMP_JSON_FILE%"
+)
+
+if not defined TAG_NAME (
+    echo Error: Could not parse tag_name from release information.
+    echo The format of the release JSON may have changed or the file was empty.
+    goto :error_exit
+)
+:: Remove potential surrounding quotes from TAG_NAME
+set "TAG_NAME=%TAG_NAME:"=%"
+echo Latest release tag: %TAG_NAME%
+
+:: Remove 'v' prefix from tag to get version. Example: v0.1.0 -> 0.1.0
+if "%TAG_NAME:~0,1%"=="v" (
+    set "VERSION=%TAG_NAME:~1%"
+) else (
+    set "VERSION=%TAG_NAME%"
+)
+
+if not defined VERSION (
+    echo Error: Could not extract version from tag '%TAG_NAME%'.
+    goto :error_exit
+)
+echo Detected version: %VERSION%
+
 :: Construct the download URL
-set "ASSET_NAME=NameTidy_%OS_NAME%_%ARCH%.zip"
-set "DOWNLOAD_URL=%RELEASE_BASE_URL%/%ASSET_NAME%"
+set "RELEASE_DOWNLOAD_URL_BASE=https://github.com/mi8bi/NameTidy/releases/download"
+set "ASSET_NAME=NameTidy_%VERSION%_%OS_NAME%_%ARCH%.zip"
+set "DOWNLOAD_URL=%RELEASE_DOWNLOAD_URL_BASE%/%TAG_NAME%/%ASSET_NAME%"
 
 echo Download URL: %DOWNLOAD_URL%
 

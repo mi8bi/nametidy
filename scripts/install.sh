@@ -106,10 +106,48 @@ esac
 echo "Detected OS: $OS"
 echo "Detected Architecture: $ARCH"
 
-# Construct the download URL
-RELEASE_BASE_URL="https://github.com/mi8bi/NameTidy/releases/latest/download"
-ASSET_NAME="NameTidy_${OS}_${ARCH}.tar.gz"
-DOWNLOAD_URL="${RELEASE_BASE_URL}/${ASSET_NAME}"
+# Fetch the latest release tag and version
+echo "Fetching latest release information..."
+LATEST_RELEASE_INFO_URL="https://api.github.com/repos/mi8bi/NameTidy/releases/latest"
+
+# Attempt to fetch tag_name using curl and grep/sed
+# This extracts the value of "tag_name": "vX.Y.Z"
+TAG_NAME=$(curl -LsS "$LATEST_RELEASE_INFO_URL" | grep '"tag_name":' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')
+
+if [ -z "$TAG_NAME" ]; then
+    echo "Error: Could not fetch the latest release tag_name from $LATEST_RELEASE_INFO_URL."
+    echo "Please check your internet connection and if the repository/releases are accessible."
+    # Try to see if jq is available for a more robust parsing as a fallback
+    if command_exists jq; then
+        echo "Attempting with jq..."
+        TAG_NAME=$(curl -LsS "$LATEST_RELEASE_INFO_URL" | jq -r .tag_name)
+         if [ -z "$TAG_NAME" ] || [ "$TAG_NAME" == "null" ]; then
+            echo "Error: jq also failed to fetch or parse tag_name."
+            exit 1
+         fi
+    else
+        echo "jq not available. Could not parse release information automatically."
+        exit 1
+    fi
+fi
+
+echo "Latest release tag: $TAG_NAME"
+
+# Remove 'v' prefix from tag to get version
+VERSION=$(echo "$TAG_NAME" | sed 's/^v//')
+if [ -z "$VERSION" ]; then
+    echo "Error: Could not extract version from tag '$TAG_NAME'."
+    exit 1
+fi
+echo "Detected version: $VERSION"
+
+# Construct the download URL using the fetched tag and version
+# Note: For Windows, the script might use .zip. This script is .sh, so .tar.gz is appropriate.
+# The ASSET_NAME now includes the VERSION.
+RELEASE_DOWNLOAD_URL_BASE="https://github.com/mi8bi/NameTidy/releases/download"
+ASSET_NAME="NameTidy_${VERSION}_${OS}_${ARCH}.tar.gz"
+DOWNLOAD_URL="${RELEASE_DOWNLOAD_URL_BASE}/${TAG_NAME}/${ASSET_NAME}"
+# Example: https://github.com/mi8bi/NameTidy/releases/download/v0.1.0/NameTidy_0.1.0_linux_amd64.tar.gz
 
 echo "Constructed download URL: $DOWNLOAD_URL"
 
