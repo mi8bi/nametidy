@@ -46,7 +46,6 @@ You can use the following scripts to automate the installation of NameTidy. Thes
     curl -LO https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
     # Or using wget:
     # wget https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
-    ```
 
 2.  **Make it executable:**
     ```bash
