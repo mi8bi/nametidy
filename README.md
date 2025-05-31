@@ -40,13 +40,12 @@ You can use the following scripts to automate the installation of NameTidy. Thes
 
 ### For Linux/macOS (using `install.sh`)
 
-1.  **Download the script:**
+1.  **Download the script (it will be saved as `install.sh` in your current directory):**
     ```bash
     # Using curl:
-    curl -LO https://raw.githubusercontent.com/mi8bi/NameTidy/main/install.sh
+    curl -LO https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
     # Or using wget:
-    # wget https://raw.githubusercontent.com/mi8bi/NameTidy/main/install.sh
-    ```
+    # wget https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
 
 2.  **Make it executable:**
     ```bash
@@ -62,12 +61,17 @@ You can use the following scripts to automate the installation of NameTidy. Thes
 ### For Windows Command Prompt (using `install.cmd`)
 
 1.  **Download the script:**
-    You can download `install.cmd` directly from the repository:
-    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/install.cmd](https://raw.githubusercontent.com/mi8bi/NameTidy/main/install.cmd)
+    You can download `install.cmd` directly from the repository (e.g., save it to your `Downloads` folder):
+    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.cmd](https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.cmd)
     (Right-click the link and select "Save link as..." or "Save As...")
 
 2.  **Run the installer:**
-    Open Command Prompt (`cmd.exe`), navigate to the directory where you saved `install.cmd`, and run:
+    Open Command Prompt (`cmd.exe`). Navigate to the directory where you saved `install.cmd` (e.g., `Downloads`) and run it:
+    ```cmd
+    cd C:\Users\YourUser\Downloads
+    install.cmd
+    ```
+    Or, if `install.cmd` is in your current directory:
     ```cmd
     install.cmd
     ```
@@ -76,17 +80,22 @@ You can use the following scripts to automate the installation of NameTidy. Thes
 ### For Windows PowerShell (using `install.ps1`)
 
 1.  **Download the script:**
-    You can download `install.ps1` directly from the repository:
-    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/install.ps1](https://raw.githubusercontent.com/mi8bi/NameTidy/main/install.ps1)
+    You can download `install.ps1` directly from the repository (e.g., save it to your `Downloads` folder):
+    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.ps1](https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.ps1)
     (Right-click the link and select "Save link as..." or "Save As...")
 
 2.  **Run the installer:**
-    Open PowerShell, navigate to the directory where you saved `install.ps1`. You may need to adjust your execution policy to run the script.
+    Open PowerShell. Navigate to the directory where you saved `install.ps1` (e.g., `Downloads`). You may need to adjust your execution policy to run the script.
+    Example:
+    ```powershell
+    cd C:\Users\YourUser\Downloads
+    # Then run one of the following:
+    ```
     To run the script for the current session without changing global policy:
     ```powershell
     PowerShell -ExecutionPolicy Bypass -File .\install.ps1
     ```
-    Alternatively, from within a PowerShell prompt:
+    Alternatively, from within that PowerShell prompt:
     ```powershell
     # Temporarily bypass execution policy for the current process
     Set-ExecutionPolicy Bypass -Scope Process -Force
