@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to download and install the latest NameTidy binary
+# Script to download and install the latest nametidy binary
 
 # Exit immediately if a command exits with a non-zero status.
 set -e
@@ -70,7 +70,7 @@ download_file() {
 }
 
 # --- Main Script ---
-echo "NameTidy Installer"
+echo "nametidy Installer"
 echo "------------------"
 
 # Create a temporary directory for download
@@ -108,7 +108,7 @@ echo "Detected Architecture: $ARCH"
 
 # Fetch the latest release tag and version
 echo "Fetching latest release information..."
-LATEST_RELEASE_INFO_URL="https://api.github.com/repos/mi8bi/NameTidy/releases/latest"
+LATEST_RELEASE_INFO_URL="https://api.github.com/repos/mi8bi/nametidy/releases/latest"
 
 # Attempt to fetch tag_name using curl and grep/sed
 # This extracts the value of "tag_name": "vX.Y.Z"
@@ -144,10 +144,10 @@ echo "Detected version: $VERSION"
 # Construct the download URL using the fetched tag and version
 # Note: For Windows, the script might use .zip. This script is .sh, so .tar.gz is appropriate.
 # The ASSET_NAME now includes the VERSION.
-RELEASE_DOWNLOAD_URL_BASE="https://github.com/mi8bi/NameTidy/releases/download"
-ASSET_NAME="NameTidy_${VERSION}_${OS}_${ARCH}.tar.gz"
+RELEASE_DOWNLOAD_URL_BASE="https://github.com/mi8bi/nametidy/releases/download"
+ASSET_NAME="nametidy_${VERSION}_${OS}_${ARCH}.tar.gz"
 DOWNLOAD_URL="${RELEASE_DOWNLOAD_URL_BASE}/${TAG_NAME}/${ASSET_NAME}"
-# Example: https://github.com/mi8bi/NameTidy/releases/download/v0.1.0/NameTidy_0.1.0_linux_amd64.tar.gz
+# Example: https://github.com/mi8bi/nametidy/releases/download/v0.1.0/nametidy_0.1.0_linux_amd64.tar.gz
 
 echo "Constructed download URL: $DOWNLOAD_URL"
 
@@ -155,7 +155,7 @@ echo "Constructed download URL: $DOWNLOAD_URL"
 ARCHIVE_PATH="${TMP_DIR}/${ASSET_NAME}"
 
 # Download the archive
-echo "Downloading NameTidy release asset..."
+echo "Downloading nametidy release asset..."
 if ! download_file "$DOWNLOAD_URL" "$ARCHIVE_PATH"; then
     echo "Error: Download failed from $DOWNLOAD_URL."
     echo "Please check the URL and your internet connection."

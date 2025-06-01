@@ -1,15 +1,15 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: Script to download and install the latest NameTidy binary for Windows
+:: Script to download and install the latest nametidy binary for Windows
 
-echo NameTidy Installer for Windows
+echo nametidy Installer for Windows
 echo ------------------------------
 
 :: --- Configuration ---
 set "BINARY_NAME=nametidy.exe"
 set "INSTALL_DIR=%USERPROFILE%\bin"
-set "RELEASE_BASE_URL=https://github.com/mi8bi/NameTidy/releases/latest/download"
+set "RELEASE_BASE_URL=https://github.com/mi8bi/nametidy/releases/latest/download"
 set "OS_NAME=windows"
 set "ARCH="
 set "MANUAL_MOVE_NEEDED=false"
@@ -30,7 +30,7 @@ echo Detected Architecture: %ARCH%
 :: --- Fetch Latest Release Information ---
 echo.
 echo Fetching latest release information...
-set "LATEST_RELEASE_INFO_URL=https://api.github.com/repos/mi8bi/NameTidy/releases/latest"
+set "LATEST_RELEASE_INFO_URL=https://api.github.com/repos/mi8bi/nametidy/releases/latest"
 set "TEMP_JSON_FILE=%TEMP%\release_info_%RANDOM%.json"
 set "TAG_NAME="
 set "VERSION="
@@ -91,15 +91,15 @@ if not defined VERSION (
 echo Detected version: %VERSION%
 
 :: Construct the download URL
-set "RELEASE_DOWNLOAD_URL_BASE=https://github.com/mi8bi/NameTidy/releases/download"
-set "ASSET_NAME=NameTidy_%VERSION%_%OS_NAME%_%ARCH%.zip"
+set "RELEASE_DOWNLOAD_URL_BASE=https://github.com/mi8bi/nametidy/releases/download"
+set "ASSET_NAME=nametidy_%VERSION%_%OS_NAME%_%ARCH%.zip"
 set "DOWNLOAD_URL=%RELEASE_DOWNLOAD_URL_BASE%/%TAG_NAME%/%ASSET_NAME%"
 
 echo Download URL: %DOWNLOAD_URL%
 
 :: --- Temporary Download Path ---
 :: Create a temporary directory for downloads
-set "TEMP_DIR=%TEMP%\NameTidy_Install_%RANDOM%"
+set "TEMP_DIR=%TEMP%\nametidy_Install_%RANDOM%"
 mkdir "%TEMP_DIR%"
 if not exist "%TEMP_DIR%\" (
     echo Error: Failed to create temporary directory: %TEMP_DIR%
@@ -111,7 +111,7 @@ set "EXTRACTED_BINARY_PATH=%TEMP_DIR%\%BINARY_NAME%"
 
 :: --- Download Logic ---
 echo.
-echo Downloading NameTidy release asset...
+echo Downloading nametidy release asset...
 
 :: Check for curl
 where curl >nul 2>nul
@@ -131,7 +131,7 @@ if %errorlevel% equ 0 (
 where bitsadmin >nul 2>nul
 if %errorlevel% equ 0 (
     echo Found bitsadmin. Attempting download...
-    bitsadmin /transfer NameTidyDownloadJob /download /priority NORMAL "%DOWNLOAD_URL%" "%ARCHIVE_PATH%"
+    bitsadmin /transfer nametidyDownloadJob /download /priority NORMAL "%DOWNLOAD_URL%" "%ARCHIVE_PATH%"
     if errorlevel 1 (
         echo Error: bitsadmin download failed. Check URL or network connection.
         echo Asset might not be available for %OS_NAME%/%ARCH%.
