@@ -17,19 +17,9 @@ var numberCmd = &cobra.Command{
 		hierarchical, _ := cmd.Flags().GetBool("hierarchical")
 		verbose, _ := cmd.Flags().GetBool("verbose")
 
-		// Initialize logger
-		utils.InitLogger(verbose)
-
-		// Check if directory exists
-		if !utils.IsDirectory(dirPath) {
-			utils.Error("The specified directory does not exist", nil)
-			return
-		}
-
-		// Initialize DB
-		db, err := cleaner.GetDB()
+		db, err := handleCommonInitializations(verbose, dirPath, true)
 		if err != nil {
-			utils.Error("Failed to open DB", err)
+			utils.Error(err.Error(), nil)
 			return
 		}
 

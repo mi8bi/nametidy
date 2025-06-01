@@ -15,19 +15,9 @@ var cleanCmd = &cobra.Command{
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
 		verbose, _ := cmd.Flags().GetBool("verbose")
 
-		// Initialize logger
-		utils.InitLogger(verbose)
-
-		// Check if directory exists
-		if !utils.IsDirectory(dirPath) {
-			utils.Error("The specified directory does not exist", nil)
-			return
-		}
-
-		// Initialize DB
-		db, err := cleaner.GetDB()
+		db, err := handleCommonInitializations(verbose, dirPath, true)
 		if err != nil {
-			utils.Error("Failed to open DB", err)
+			utils.Error(err.Error(), nil) // Assuming utils.Error can take a string and nil error
 			return
 		}
 

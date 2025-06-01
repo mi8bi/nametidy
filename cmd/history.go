@@ -19,11 +19,10 @@ var historyClearCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		verbose, _ := cmd.Flags().GetBool("verbose")
 
-		utils.InitLogger(verbose)
-
-		db, err := cleaner.GetDB()
+		// For history clear, dirPath is not needed, so pass "" and checkDir=false
+		db, err := handleCommonInitializations(verbose, "", false)
 		if err != nil {
-			utils.Error("Failed to open DB", err)
+			utils.Error(err.Error(), nil)
 			return
 		}
 
