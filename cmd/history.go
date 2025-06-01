@@ -22,7 +22,7 @@ var historyClearCmd = &cobra.Command{
 		// For history clear, dirPath is not needed, so pass "" and checkDir=false
 		db, err := handleCommonInitializations(verbose, "", false)
 		if err != nil {
-			utils.Error(err.Error(), nil)
+			utils.Error("Error during common initialization: %v", err)
 			return
 		}
 

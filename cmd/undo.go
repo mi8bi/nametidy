@@ -17,7 +17,7 @@ var undoCmd = &cobra.Command{
 
 		db, err := handleCommonInitializations(verbose, dirPath, true)
 		if err != nil {
-			utils.Error(err.Error(), nil)
+			utils.Error("Error during common initialization: %v", err)
 			return
 		}
 
