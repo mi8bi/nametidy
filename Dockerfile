@@ -17,7 +17,11 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy source code
-COPY . .
+COPY main.go ./
+COPY cmd/ ./cmd/
+COPY internal/ ./internal/
+COPY scripts/ ./scripts/
+COPY testutils/ ./testutils/
 
 # Build the application
 # CGO_ENABLED=0 for static binary
