@@ -1,0 +1,72 @@
+services:
+  nametidy-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: nametidy-dev:latest
+    container_name: nametidy-development
+    
+    # Keep container running for development
+    stdin_open: true
+    tty: true
+    
+    # Volume mounts for development
+    volumes:
+      # Mount source code for hot reload
+      - type: bind
+        source: .
+        target: /workspace
+      
+      # Mount test files
+      - type: bind
+        source: ./test_files
+        target: /workspace/test_files
+        bind:
+          create_host_path: true
+      
+      # Cache Go modules and build cache
+      - go_mod_cache:/go/pkg/mod
+      - go_build_cache:/root/.cache/go-build
+    
+    # Environment variables for development
+    environment:
+      - GO111MODULE=on
+      - CGO_ENABLED=0
+      - GOOS=linux
+      - TZ=Asia/Tokyo
+      - ENV=development
+    
+    # Working directory
+    working_dir: /workspace
+    
+    # Port mapping for future web interface
+    ports:
+      - "8080:8080"
+    
+    # Command for development (override in docker-compose.override.yml if needed)
+    command: /bin/bash
+    
+    # Networks
+    networks:
+      - dev_network
+
+  # Optional: Database service for future features
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: nametidy-redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - dev_network
+
+# Named volumes for caching
+volumes:
+  go_mod_cache:
+    driver: local
+  go_build_cache:
+    driver: local
+
+# Development network
+networks:
+  dev_network:
+    driver: bridge

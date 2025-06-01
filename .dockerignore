@@ -1,0 +1,95 @@
+# Git
+.git
+.gitignore
+.gitattributes
+.github
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Docker files
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+.dockerignore
+
+# Build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+nametidy
+nametidy.exe
+
+# Test files and directories
+test/
+tests/
+test_files/
+*_test.go
+coverage.out
+coverage.html
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+.tmp
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Go specific
+vendor/
+bin/
+pkg/
+*.cover
+*.out
+
+# Scripts (keep essential ones)
+scripts/
+!scripts/essential.sh
+
+# Config files (keep templates)
+config/
+!config/*.template
+!config/*.example
+
+# Dependencies
+node_modules/
+
+# Archives
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Environment files
+.env
+.env.local
+.env.*.local

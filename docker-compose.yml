@@ -1,0 +1,64 @@
+services:
+  nametidy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nametidy:latest
+    container_name: nametidy-app
+    restart: unless-stopped
+    
+    # Volume mounts for file processing
+    volumes:
+      # Mount local directory for file processing
+      - type: bind
+        source: ./files
+        target: /workspace
+        bind:
+          create_host_path: true
+      
+      # Optional: Mount custom config
+      # - ./config:/app/config:ro
+    
+    # Environment variables
+    environment:
+      - TZ=Asia/Tokyo
+      - LANG=C.UTF-8
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "nametidy", "--help"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Optional: Create a named volume for persistent data
+volumes:
+  nametidy_data:
+    driver: local
+
+# Optional: Create a custom network
+networks:
+  nametidy_network:
+    driver: bridge

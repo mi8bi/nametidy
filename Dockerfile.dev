@@ -1,0 +1,49 @@
+# NameTidy Dockerfile (Development)
+# Development environment with Go tools and hot reload capability
+
+FROM golang:1.23-alpine
+
+# Install development tools
+RUN apk add --no-cache \
+    git \
+    ca-certificates \
+    tzdata \
+    bash \
+    make \
+    curl \
+    inotify-tools
+
+# Install air for hot reload with specific version for compatibility
+# Use a version that works with Go 1.23
+RUN go install github.com/cosmtrek/air@v1.49.0 || \
+    echo "Air installation failed, using alternative watch method"
+
+# Create non-root user for development
+RUN addgroup -g 1000 developer && \
+    adduser -u 1000 -G developer -s /bin/bash -D developer
+
+# Set working directory
+WORKDIR /workspace
+
+# Copy go mod files for dependency caching
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Change ownership of workspace
+RUN chown -R developer:developer /workspace
+
+# Switch to developer user
+USER developer
+
+# Set environment variables for development
+ENV GO111MODULE=on
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+
+# Expose port for potential web interface (future feature)
+EXPOSE 8080
+
+# Default command for development
+CMD ["bash"]
