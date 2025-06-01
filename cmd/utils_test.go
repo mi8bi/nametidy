@@ -3,7 +3,6 @@ package cmd
 import (
 	"NameTidy/internal/cleaner" // For cleaner.GetDB and its potential errors
 	"NameTidy/internal/utils"   // For utils.InitLogger
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -124,7 +123,7 @@ func TestHandleCommonInitializations(t *testing.T) {
 
 		// --- This is where true mocking of cleaner.GetDB would be needed ---
 		// Hypothetical: originalGetDBFunc := cleaner.GetDB
-		// cleaner.GetDB = func() (*gorm.DB, error) { return nil, errors.New("mock DB error") }
+		// cleaner.GetDB = func() (*gorm.DB, error) { return nil, errors.New("mock DB error") } // errors.New would require "errors" pkg
 		// defer func() { cleaner.GetDB = originalGetDBFunc }()
 		// --- End Hypothetical ---
 

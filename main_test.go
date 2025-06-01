@@ -172,7 +172,7 @@ func TestInvalidDirectory(t *testing.T) {
 	cmd := exec.Command("./" + exeName, "clean", "--path=invalid_dir")
 	output, _ := cmd.CombinedOutput()
 
-	if !strings.Contains(string(output), "The specified directory does not exist") {
+	if !strings.Contains(string(output), "the specified directory 'invalid_dir' does not exist or is not a directory") {
 		t.Errorf("存在しないディレクトリのエラーメッセージが正しくありません。出力: %s", string(output))
 	}
 }
