@@ -3,6 +3,7 @@ package cleaner
 import (
 	"NameTidy/internal/utils" // For utils.Info/Error if we want to check logs
 	"errors"
+	_ "gorm.io/driver/sqlite"
 	"fmt"
 	"os"
 	"path/filepath"

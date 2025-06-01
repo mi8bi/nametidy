@@ -17,7 +17,7 @@ var cleanCmd = &cobra.Command{
 
 		db, err := handleCommonInitializations(verbose, dirPath, true)
 		if err != nil {
-			utils.Error(err.Error(), nil) // Assuming utils.Error can take a string and nil error
+			utils.Error("Error during common initialization: %v", err)
 			return
 		}
 

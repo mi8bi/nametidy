@@ -63,11 +63,7 @@ func TestHandleCommonInitializations(t *testing.T) {
 	// Test Case 1: Successful initialization
 	t.Run("SuccessfulInitialization", func(t *testing.T) {
 		// For this test, we need a directory that exists.
-		tempDir, err := os.MkdirTemp("", "testdir")
-		if err != nil {
-			t.Fatalf("Failed to create temp dir: %v", err)
-		}
-		defer os.RemoveAll(tempDir)
+		tempDir := t.TempDir()
 
 		// The real GetDB will be called. For success, it should work.
 		// If it fails due to environment, this test will fail.
@@ -85,9 +81,12 @@ func TestHandleCommonInitializations(t *testing.T) {
 
 	// Test Case 2: Directory does not exist
 	t.Run("DirectoryDoesNotExist", func(t *testing.T) {
-		nonExistentDir := filepath.Join(os.TempDir(), "non_existent_dir_for_test")
-		// Ensure it really doesn't exist from a previous failed run
-		_ = os.RemoveAll(nonExistentDir)
+		baseDir := t.TempDir()
+		nonExistentDir := filepath.Join(baseDir, "non_existent_dir_for_test")
+		// t.TempDir() creates a unique directory, so nonExistentDir inside it won't exist
+		// unless explicitly created. If we want to be absolutely sure, we can attempt a remove.
+		// However, for a "non-existent" test, simply joining a new name within a fresh tempDir is usually sufficient.
+		// _ = os.RemoveAll(nonExistentDir) // This line is likely not needed anymore.
 
 		// The real GetDB will be called by handleCommonInitializations after the dir check.
 		// This is okay as the function should error out before that if dir doesn't exist.
@@ -115,11 +114,7 @@ func TestHandleCommonInitializations(t *testing.T) {
 		// This test is more of a placeholder for the desired behavior if mocking were possible.
 		// If cleaner.GetDB actually fails in the test env, this test might pass by catching that.
 		// We will create a directory so the IsDirectory check passes.
-		tempDir, err := os.MkdirTemp("", "testdir_db_fail")
-		if err != nil {
-			t.Fatalf("Failed to create temp dir: %v", err)
-		}
-		defer os.RemoveAll(tempDir)
+		tempDir := t.TempDir()
 
 		// --- This is where true mocking of cleaner.GetDB would be needed ---
 		// Hypothetical: originalGetDBFunc := cleaner.GetDB
@@ -155,8 +150,10 @@ func TestHandleCommonInitializations(t *testing.T) {
 	t.Run("CheckDirIsFalse", func(t *testing.T) {
 		// For this test, IsDirectory should not be called.
 		// We use a non-existent path; if IsDirectory were called, it would fail.
-		nonExistentDir := filepath.Join(os.TempDir(), "non_existent_for_checkdir_false")
-		_ = os.RemoveAll(nonExistentDir) // ensure it's not there
+		baseDir := t.TempDir()
+		nonExistentDir := filepath.Join(baseDir, "non_existent_for_checkdir_false")
+		// As above, joining a new name within a fresh tempDir is usually sufficient for it to be non-existent.
+		// _ = os.RemoveAll(nonExistentDir) // This line is likely not needed anymore.
 
 		// The real GetDB will be called.
 		db, err := handleCommonInitializations(false, nonExistentDir, false)
