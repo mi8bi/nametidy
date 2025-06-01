@@ -1,9 +1,9 @@
 #Requires -Version 5.0
 <#
 .SYNOPSIS
-    Installs the NameTidy utility for Windows.
+    Installs the nametidy utility for Windows.
 .DESCRIPTION
-    This script downloads the latest version of NameTidy for the appropriate
+    This script downloads the latest version of nametidy for the appropriate
     architecture, extracts it, installs it to $env:USERPROFILE\bin, and
     attempts to add this directory to the user's PATH environment variable.
 .NOTES
@@ -20,13 +20,13 @@ $InstallBaseDir = $env:USERPROFILE
 $InstallRelativePath = "bin" # Relative to InstallBaseDir
 $InstallDir = Join-Path -Path $InstallBaseDir -ChildPath $InstallRelativePath
 
-$ReleaseBaseUrl = "https://github.com/mi8bi/NameTidy/releases/latest/download"
+$ReleaseBaseUrl = "https://github.com/mi8bi/nametidy/releases/latest/download"
 $OsName = "windows"
 $Architecture = ""
 
 # --- Temporary Path ---
 # Create a temporary directory for downloads and extraction
-$TempDir = Join-Path -Path $env:TEMP -ChildPath "NameTidy_Install_$($PID)_$(Get-Random)"
+$TempDir = Join-Path -Path $env:TEMP -ChildPath "nametidy_Install_$($PID)_$(Get-Random)"
 try {
     if (Test-Path $TempDir) {
         Write-Warning "Temporary directory $TempDir already exists. Removing."
@@ -42,12 +42,12 @@ catch {
 
 # --- Main Script Logic ---
 try {
-    Write-Host "NameTidy Installer for Windows PowerShell"
+    Write-Host "nametidy Installer for Windows PowerShell"
     Write-Host "---------------------------------------"
 
     # --- Fetch Latest Release Information ---
     Write-Host "Fetching latest release information..."
-    $LatestReleaseInfoUrl = "https://api.github.com/repos/mi8bi/NameTidy/releases/latest"
+    $LatestReleaseInfoUrl = "https://api.github.com/repos/mi8bi/nametidy/releases/latest"
     $TagName = ""
     $Version = ""
 
@@ -95,17 +95,17 @@ try {
     # $OsName is already defined in Configuration section
     # $Architecture is determined above
     # $Version and $TagName are from the new block above
-    $AssetName = "NameTidy_${Version}_${OsName}_${Architecture}.zip"
+    $AssetName = "nametidy_${Version}_${OsName}_${Architecture}.zip"
     # Construct specific download URL using the tag
-    $DownloadUrl = "https://github.com/mi8bi/NameTidy/releases/download/${TagName}/${AssetName}"
-    # Example: https://github.com/mi8bi/NameTidy/releases/download/v0.1.0/NameTidy_0.1.0_windows_amd64.zip
+    $DownloadUrl = "https://github.com/mi8bi/nametidy/releases/download/${TagName}/${AssetName}"
+    # Example: https://github.com/mi8bi/nametidy/releases/download/v0.1.0/nametidy_0.1.0_windows_amd64.zip
     $ArchiveFilePath = Join-Path -Path $TempDir -ChildPath $AssetName
     $ExtractedBinaryPath = Join-Path -Path $TempDir -ChildPath $BinaryName # Assuming it's at the root of the zip
 
     Write-Host "Download URL: $DownloadUrl"
 
     # --- Download ---
-    Write-Host "Downloading NameTidy release asset..."
+    Write-Host "Downloading nametidy release asset..."
     try {
         Invoke-WebRequest -Uri $DownloadUrl -OutFile $ArchiveFilePath -UseBasicParsing
         Write-Host "Download successful: $ArchiveFilePath"

@@ -1,21 +1,21 @@
 > ✨ A fast and simple CLI tool to clean and rename file names — powered by Go.
 
-# [NameTidy](https://mi8bi.github.io/NameTidy/)
+# [nametidy](https://mi8bi.github.io/nametidy/)
 
-NameTidy is a fast and flexible command-line tool for cleaning and renaming file names.  
+nametidy is a fast and flexible command-line tool for cleaning and renaming file names.
 It supports operations such as filename cleanup, adding sequence numbers, and undoing changes — all with a simple and intuitive interface.
 
-[![Build Status](https://github.com/mi8bi/NameTidy/actions/workflows/test.yml/badge.svg)](https://github.com/mi8bi/NameTidy/actions/workflows/test.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mi8bi/NameTidy)](https://goreportcard.com/report/github.com/mi8bi/NameTidy)
+[![Build Status](https://github.com/mi8bi/nametidy/actions/workflows/test.yml/badge.svg)](https://github.com/mi8bi/nametidy/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mi8bi/nametidy)](https://goreportcard.com/report/github.com/mi8bi/nametidy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Latest Release](https://img.shields.io/github/v/release/mi8bi/NameTidy)](https://github.com/mi8bi/NameTidy/releases/latest)
-[![GitHub Stars](https://img.shields.io/github/stars/mi8bi/NameTidy?style=social)](https://github.com/mi8bi/NameTidy/stargazers)
+[![Latest Release](https://img.shields.io/github/v/release/mi8bi/nametidy)](https://github.com/mi8bi/nametidy/releases/latest)
+[![GitHub Stars](https://img.shields.io/github/stars/mi8bi/nametidy?style=social)](https://github.com/mi8bi/nametidy/stargazers)
 
 ---
 
 ## 📽️ Demo
 
-See NameTidy in action:
+See nametidy in action:
 
 [![NameTidy_Demo002](https://asciinema.org/a/719898.svg)](https://asciinema.org/a/719898)
 
@@ -42,16 +42,16 @@ See NameTidy in action:
 
 ## Automated Installation
 
-You can use the following scripts to automate the installation of NameTidy. These scripts will detect your system's architecture and download the appropriate binary.
+You can use the following scripts to automate the installation of nametidy. These scripts will detect your system's architecture and download the appropriate binary.
 
 ### For Linux/macOS (using `install.sh`)
 
 1.  **Download the script (it will be saved as `install.sh` in your current directory):**
     ```bash
     # Using curl:
-    curl -LO https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
+    curl -LO https://raw.githubusercontent.com/mi8bi/nametidy/main/scripts/install.sh
     # Or using wget:
-    # wget https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.sh
+    # wget https://raw.githubusercontent.com/mi8bi/nametidy/main/scripts/install.sh
 
 2.  **Make it executable:**
     ```bash
@@ -68,7 +68,7 @@ You can use the following scripts to automate the installation of NameTidy. Thes
 
 1.  **Download the script:**
     You can download `install.cmd` directly from the repository (e.g., save it to your `Downloads` folder):
-    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.cmd](https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.cmd)
+    [https://raw.githubusercontent.com/mi8bi/nametidy/main/scripts/install.cmd](https://raw.githubusercontent.com/mi8bi/nametidy/main/scripts/install.cmd)
     (Right-click the link and select "Save link as..." or "Save As...")
 
 2.  **Run the installer:**
@@ -87,7 +87,7 @@ You can use the following scripts to automate the installation of NameTidy. Thes
 
 1.  **Download the script:**
     You can download `install.ps1` directly from the repository (e.g., save it to your `Downloads` folder):
-    [https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.ps1](https://raw.githubusercontent.com/mi8bi/NameTidy/main/scripts/install.ps1)
+    [https://raw.githubusercontent.com/mi8bi/nametidy/main/scripts/install.ps1](https://raw.githubusercontent.com/mi8bi/nametidy/main/scripts/install.ps1)
     (Right-click the link and select "Save link as..." or "Save As...")
 
 2.  **Run the installer:**
@@ -113,13 +113,13 @@ You can use the following scripts to automate the installation of NameTidy. Thes
 
 ## Manual Installation
 
-You can download prebuilt binaries from the [GitHub Releases page](https://github.com/mi8bi/NameTidy/releases):
+You can download prebuilt binaries from the [GitHub Releases page](https://github.com/mi8bi/nametidy/releases):
 
-1. Go to the [Releases](https://github.com/mi8bi/NameTidy/releases) page on GitHub.
-2. Find the latest release and download the binary file for your OS and architecture (e.g., `NameTidy_windows_amd64.zip` or `NameTidy_linux_amd64.tar.gz`).
+1. Go to the [Releases](https://github.com/mi8bi/nametidy/releases) page on GitHub.
+2. Find the latest release and download the binary file for your OS and architecture (e.g., `nametidy_windows_amd64.zip` or `nametidy_linux_amd64.tar.gz`).
 3. Extract the archive. For `.tar.gz` files on Linux/macOS:
    ```bash
-   tar -xzvf NameTidy_VERSION_OS_ARCH.tar.gz
+   tar -xzvf nametidy_VERSION_OS_ARCH.tar.gz
    ```
    For `.zip` files on Windows, you can use File Explorer's built-in "Extract All..." option.
 4. Move the extracted `nametidy` (or `nametidy.exe` on Windows) executable to a directory in your system's PATH.
@@ -132,19 +132,19 @@ You can download prebuilt binaries from the [GitHub Releases page](https://githu
 
 ## Build
 
-NameTidy is written in Go. To install it locally:
+nametidy is written in Go. To install it locally:
 
 1. Make sure Go is installed: https://golang.org/dl/
 2. Clone the repository:
 
 ```bash
-git clone https://github.com/mi8bi/NameTidy.git
+git clone https://github.com/mi8bi/nametidy.git
 ```
 
 3. Build the project with Go:
 
 ```bash
-cd NameTidy
+cd nametidy
 go build
 ```
 
@@ -157,7 +157,7 @@ Organize and standardize file names in your target directory using intuitive sub
 Removes unwanted characters, converts spaces to underscores, and standardizes file names.
 
 ```bash
-NameTidy clean -p ./test_dir
+nametidy clean -p ./test_dir
 ```
 
 #### Example Output:
@@ -165,15 +165,15 @@ NameTidy clean -p ./test_dir
 ```
 Renamed: ./test_dir/file (1).txt → ./test_dir/file_1.txt
 Renamed: ./test_dir/hello world.txt → ./test_dir/hello_world.txt
-History file path: ./test_dir/.NameTidy_History
+History file path: ./test_dir/.nametidy_history
 ```
 
 
 ### Undo Changes
-Restores the most recent file renaming performed by NameTidy
+Restores the most recent file renaming performed by nametidy
 
 ```bash
-NameTidy undo -p ./test_dir
+nametidy undo -p ./test_dir
 ```
 
 #### Example Output:
@@ -188,7 +188,7 @@ Restored: ./test_dir/hello_world.txt → ./test_dir/hello world.txt
 Displays changes without modifying any files.
 
 ```bash
-NameTidy clean -p ./test_dir -d
+nametidy clean -p ./test_dir -d
 ```
 
 #### Example Output:
@@ -203,7 +203,7 @@ NameTidy clean -p ./test_dir -d
 Enables detailed logs of the renaming process.
 
 ```bash
-NameTidy clean -p ./test_dir -v
+nametidy clean -p ./test_dir -v
 ```
 
 #### Example Output:
@@ -212,7 +212,7 @@ NameTidy clean -p ./test_dir -v
 2025/03/30 17:39:08 [INFO] Starting file name cleanup...
 Renamed: ./test_dir/file (1).txt → ./test_dir/file_1.txt
 Renamed: ./test_dir/hello world.txt → ./test_dir/hello_world.txt
-History file path: ./test_dir/.NameTidy_History
+History file path: ./test_dir/.nametidy_history
 2025/03/30 17:39:08 [INFO] File name cleanup completed.
 ```
 
@@ -220,7 +220,7 @@ History file path: ./test_dir/.NameTidy_History
 Adds numerical prefixes to file names. Use -n to set digit length, and -H for hierarchical mode.
 
 ```bash
-NameTidy number -p ./test_dir -n 3
+nametidy number -p ./test_dir -n 3
 ```
 
 #### Example Output:
@@ -232,7 +232,7 @@ Renamed: ./test_dir/photo.jpg → ./test_dir/002_photo.jpg
 
 
 ```bash
-NameTidy number -p ./test_dir -n 3 -H
+nametidy number -p ./test_dir -n 3 -H
 ```
 
 #### Example Output:
