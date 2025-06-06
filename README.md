@@ -243,7 +243,7 @@ Renamed: ./test_dir/folder1/note.pdf → ./test_dir/folder1/002_note.pdf
 Renamed: ./test_dir/folder2/image.png → ./test_dir/folder2/001_image.png
 ```
 
-## ⚙️ Options
+## Options
 
 | Option / Command      | Description |
 |-----------------------|-------------|
