@@ -3,11 +3,11 @@ package cmd
 import (
     "NameTidy/internal/cleaner"
     "NameTidy/internal/utils"
-
     "github.com/spf13/cobra"
+    "gorm.io/gorm"
 )
 
-type operationFunc func(db cleaner.DB, dirPath string, dryRun bool) error
+type operationFunc func(db *gorm.DB, dirPath string, dryRun bool) error
 
 func runWithCommonSetup(opName string, op operationFunc) func(cmd *cobra.Command, args []string) {
     return func(cmd *cobra.Command, args []string) {
@@ -15,23 +15,19 @@ func runWithCommonSetup(opName string, op operationFunc) func(cmd *cobra.Command
         dryRun, _ := cmd.Flags().GetBool("dry-run")
         verbose, _ := cmd.Flags().GetBool("verbose")
 
-		// Initialize logger
         utils.InitLogger(verbose)
 
-		// Check if directory exists
         if !utils.IsDirectory(dirPath) {
             utils.Error("The specified directory does not exist", nil)
             return
         }
 
-		// Initialize DB
         db, err := cleaner.GetDB()
         if err != nil {
             utils.Error("Failed to open DB", err)
             return
         }
 
-		// --clean process
         utils.Info("Starting " + opName + "...")
         if err := op(db, dirPath, dryRun); err != nil {
             utils.Error(opName+" failed", err)
