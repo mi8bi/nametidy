@@ -122,7 +122,7 @@ try {
 
         # Search for the binary, trying possible names
         # $BinaryName is "nametidy.exe" (defined in Configuration)
-        $PossibleNames = @($BinaryName, "NameTidy.exe")
+        $PossibleNames = @($BinaryName, "nametidy.exe")
         $FoundBinaryInfo = $null
 
         foreach ($name_to_find in $PossibleNames) {
@@ -152,9 +152,9 @@ try {
         }
         # $ExtractedBinaryPath is now updated to the actual found binary path.
         # The script will proceed to use this updated $ExtractedBinaryPath for installation.
-        # If "NameTidy.exe" was found, $ExtractedBinaryPath points to it.
+        # If "nametidy.exe" was found, $ExtractedBinaryPath points to it.
         # The $FinalInstallPath is $InstallDir\$BinaryName ("nametidy.exe").
-        # So, Move-Item will effectively rename "NameTidy.exe" to "nametidy.exe" if that was what was found. This is desired.
+        # So, Move-Item will effectively rename "nametidy.exe" to "nametidy.exe" if that was what was found. This is desired.
     }
     catch {
         # This catch block handles errors from Expand-Archive or the 'throw' if binary not found.

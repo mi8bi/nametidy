@@ -4,7 +4,7 @@ Copyright © 2025 mi8bi <mi8biiiii@gmail.com>
 package cmd
 
 import (
-	"NameTidy/internal/cleaner"
+	"nametidy/internal/cleaner"
 	"github.com/spf13/cobra"
 )
 

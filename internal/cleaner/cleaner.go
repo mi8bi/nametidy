@@ -1,7 +1,7 @@
 package cleaner
 
 import (
-	"NameTidy/internal/utils"
+	"nametidy/internal/utils"
 	"fmt"
 	"os"
 	"path/filepath"

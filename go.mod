@@ -1,4 +1,4 @@
-module NameTidy
+module nametidy
 
 go 1.23.5
 

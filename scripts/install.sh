@@ -178,11 +178,11 @@ if ! tar -xzf "$ARCHIVE_PATH" -C "$TMP_DIR"; then
 fi
 echo "Archive extracted to '$TMP_DIR'."
 
-# Search for the binary, first 'nametidy', then 'NameTidy'
+# Search for the binary, first 'nametidy', then 'nametidy'
 # We look for an executable file.
 FOUND_BINARY_PATH=""
 # $BINARY_NAME is "nametidy" as defined in Global Variables
-POSSIBLE_NAMES=("$BINARY_NAME" "NameTidy")
+POSSIBLE_NAMES=("$BINARY_NAME" "nametidy")
 
 for name_to_find in "${POSSIBLE_NAMES[@]}"; do
     echo "Searching for executable binary '$name_to_find' in '$TMP_DIR'..."
@@ -214,7 +214,7 @@ for name_to_find in "${POSSIBLE_NAMES[@]}"; do
 done
 
 if [ -z "$FOUND_BINARY_PATH" ]; then
-    echo "Error: Could not find the '$BINARY_NAME' or 'NameTidy' executable binary in the extracted files at '$TMP_DIR'."
+    echo "Error: Could not find the '$BINARY_NAME' or 'nametidy' executable binary in the extracted files at '$TMP_DIR'."
     echo "Archive contents (top level):"
     ls -Al "$TMP_DIR"
     # More detailed listing if needed:
@@ -227,9 +227,9 @@ fi
 EXTRACTED_BINARY_PATH="$FOUND_BINARY_PATH"
 # The rest of the script uses $EXTRACTED_BINARY_PATH for chmod, mv, etc.
 # Note: The global BINARY_NAME variable is still "nametidy".
-# If "NameTidy" was found, INSTALLED_BINARY_PATH (".../nametidy") would be different from the found name.
+# If "nametidy" was found, INSTALLED_BINARY_PATH (".../nametidy") would be different from the found name.
 # The script later does `mv "$EXTRACTED_BINARY_PATH" "$INSTALLED_BINARY_PATH"`.
-# This means if "NameTidy" is found, it will be moved and renamed to "nametidy" in the install directory. This is the desired behavior.
+# This means if "nametidy" is found, it will be moved and renamed to "nametidy" in the install directory. This is the desired behavior.
 echo "Using binary found at '$EXTRACTED_BINARY_PATH'"
 
 # Clean up downloaded archive

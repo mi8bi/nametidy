@@ -1,4 +1,4 @@
-# NameTidy Dockerfile (Production)
+# nametidy Dockerfile (Production)
 # Multi-stage build for minimal final image
 
 # Build stage

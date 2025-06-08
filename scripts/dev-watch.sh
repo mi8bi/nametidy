@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# NameTidy Development Watch Script
+# nametidy Development Watch Script
 # This script provides hot reload functionality for development
 
 set -e
 
-echo "🚀 Starting NameTidy development watch..."
+echo "🚀 Starting nametidy development watch..."
 echo "📁 Working directory: $(pwd)"
 echo "🔍 Watching for Go file changes..."
 
 # Build function
 build_and_run() {
-    echo "🔨 Building NameTidy..."
+    echo "🔨 Building nametidy..."
     if go build -o nametidy .; then
         echo "✅ Build successful!"
         echo "🧪 Running basic test..."

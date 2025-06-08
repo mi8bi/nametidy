@@ -212,7 +212,7 @@ echo.
 echo Searching for the binary in "%TEMP_DIR%"...
 set "FOUND_BINARY_PATH="
 :: %BINARY_NAME% is "nametidy.exe"
-set "POSSIBLE_BINARY_NAMES=%BINARY_NAME% NameTidy.exe"
+set "POSSIBLE_BINARY_NAMES=%BINARY_NAME% nametidy.exe"
 
 FOR %%N IN (%POSSIBLE_BINARY_NAMES%) DO (
     IF not defined FOUND_BINARY_PATH (
@@ -227,7 +227,7 @@ FOR %%N IN (%POSSIBLE_BINARY_NAMES%) DO (
 )
 
 IF not defined FOUND_BINARY_PATH (
-    echo Error: Could not find %BINARY_NAME% or NameTidy.exe in the extracted files at "%TEMP_DIR%".
+    echo Error: Could not find %BINARY_NAME% or nametidy.exe in the extracted files at "%TEMP_DIR%".
     echo Listing contents of "%TEMP_DIR%" (recursive):
     dir "%TEMP_DIR%" /s /b /A
     goto :error_exit
@@ -238,7 +238,7 @@ set "EXTRACTED_BINARY_PATH=%FOUND_BINARY_PATH%"
 echo Binary to be installed: %EXTRACTED_BINARY_PATH%
 :: Note: The original EXTRACTED_BINARY_PATH was %TEMP_DIR%\%BINARY_NAME%. This update is crucial.
 :: The FINAL_INSTALL_PATH is %INSTALL_DIR%\%BINARY_NAME%.
-:: If "NameTidy.exe" is found, it will be moved and renamed to "nametidy.exe" in the install directory. This is desired.
+:: If "nametidy.exe" is found, it will be moved and renamed to "nametidy.exe" in the install directory. This is desired.
 
 goto :install_logic :: Proceed to installation
 
