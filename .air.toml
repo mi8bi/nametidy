@@ -1,4 +1,4 @@
-# Air configuration for NameTidy development
+# Air configuration for nametidy development
 # See: https://github.com/cosmtrek/air
 
 root = "."

@@ -13,7 +13,7 @@ const testDir = "test_data"
 
 // buildExecutableでWindows環境用に修正
 func buildExecutable(t *testing.T) string {
-	exeName := "NameTidy"
+	exeName := "nametidy"
 	if runtime.GOOS == "windows" {
 		exeName += ".exe"
 	}
@@ -30,7 +30,7 @@ func buildExecutable(t *testing.T) string {
 // テスト用のディレクトリとファイルの準備
 func setupTestEnvironment(t *testing.T) {
 	os.Mkdir(testDir, 0755)
-	files := []string{"IMG 2023 01 01.JPG", "_MyFile__.txt", "Special$$File!.docx", ".NameTidy_History"}
+	files := []string{"IMG 2023 01 01.JPG", "_MyFile__.txt", "Special$$File!.docx", ".nametidy_History"}
 	for _, file := range files {
 		path := filepath.Join(testDir, file)
 		os.WriteFile(path, []byte("test content"), 0644)
@@ -62,9 +62,9 @@ func TestClean(t *testing.T) {
 		}
 	}
 
-	// `.NameTidy_History` は変更されていないことを確認
-	if _, err := os.Stat(filepath.Join(testDir, ".NameTidy_History")); os.IsNotExist(err) {
-		t.Errorf("履歴ファイルが見つかりません: .NameTidy_History")
+	// `.nametidy_History` は変更されていないことを確認
+	if _, err := os.Stat(filepath.Join(testDir, ".nametidy_History")); os.IsNotExist(err) {
+		t.Errorf("履歴ファイルが見つかりません: .nametidy_History")
 	}
 }
 
@@ -111,7 +111,7 @@ func TestUndo(t *testing.T) {
 	}
 
 	// Step 2: 履歴ファイルが存在するか確認
-	historyFile := filepath.Join(testDir, ".NameTidy_History")
+	historyFile := filepath.Join(testDir, ".nametidy_History")
 	if _, err := os.Stat(historyFile); os.IsNotExist(err) {
 		t.Fatalf("履歴ファイルが存在しません: %s", historyFile)
 	}

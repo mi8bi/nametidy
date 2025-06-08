@@ -1,4 +1,4 @@
-project_name: NameTidy
+project_name: nametidy
 
 builds:
   - id: windows

@@ -1,6 +1,6 @@
-# NameTidy Docker ガイド
+# nametidy Docker ガイド
 
-NameTidyのDocker環境での使用方法について説明します。
+nametidyのDocker環境での使用方法について説明します。
 
 ## 📋 目次
 
@@ -18,8 +18,8 @@ NameTidyのDocker環境での使用方法について説明します。
 
 ### 1. リポジトリのクローン
 ```bash
-git clone https://github.com/mi8bi/NameTidy.git
-cd NameTidy
+git clone https://github.com/mi8bi/nametidy.git
+cd nametidy
 ```
 
 ### 2. 即座に実行
@@ -257,7 +257,7 @@ docker buildx build --platform linux/amd64,linux/arm64 -t nametidy:latest .
 - [Docker公式ドキュメント](https://docs.docker.com/)
 - [Docker Compose公式ドキュメント](https://docs.docker.com/compose/)
 - [Go Docker Best Practices](https://docs.docker.com/language/golang/)
-- [NameTidy メインドキュメント](../README.md)
+- [nametidy メインドキュメント](../README.md)
 
 ## 🤝 貢献
 
@@ -265,4 +265,4 @@ Docker環境に関する改善提案や問題報告は、GitHubのIssueでお知
 
 ---
 
-> **注意**: このドキュメントは`NameTidy`のDocker環境での使用方法を説明しています。アプリケーション自体の使用方法は[メインのREADME](../README.md)を参照してください。
+> **注意**: このドキュメントは`nametidy`のDocker環境での使用方法を説明しています。アプリケーション自体の使用方法は[メインのREADME](../README.md)を参照してください。

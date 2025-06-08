@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"NameTidy/testutils"
+	"nametidy/testutils"
 	"os"
 	"path/filepath"
 	"testing"

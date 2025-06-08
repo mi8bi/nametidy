@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "NameTidy/cmd"
+import "nametidy/cmd"
 
 func main() {
 	cmd.Execute()
