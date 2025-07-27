@@ -7,6 +7,7 @@ It supports operations such as filename cleanup, adding sequence numbers, and un
 
 [![Build Status](https://github.com/mi8bi/nametidy/actions/workflows/test.yml/badge.svg)](https://github.com/mi8bi/nametidy/actions/workflows/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mi8bi/nametidy)](https://goreportcard.com/report/github.com/mi8bi/nametidy)
+[![codecov](https://codecov.io/gh/mi8bi/nametidy/branch/main/graph/badge.svg)](https://codecov.io/gh/mi8bi/nametidy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Latest Release](https://img.shields.io/github/v/release/mi8bi/nametidy)](https://github.com/mi8bi/nametidy/releases/latest)
 [![GitHub Stars](https://img.shields.io/github/stars/mi8bi/nametidy?style=social)](https://github.com/mi8bi/nametidy/stargazers)

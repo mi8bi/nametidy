@@ -1,0 +1,12 @@
+{
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "groupName": "Go Modules",
+      "updateTypes": ["minor", "patch"]
+    }
+  ],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["after 10pm on sunday"]
+}
