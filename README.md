@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/mi8bi/nametidy">
+    <img src="./assets/ogp.png" alt="OGP Image">
+  </a>
+</p>
+
 > ✨ A fast and simple CLI tool to clean and rename file names — powered by Go.
 
 # [nametidy](https://mi8bi.github.io/nametidy/)
