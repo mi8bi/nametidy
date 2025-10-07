@@ -94,7 +94,7 @@ func TestRenameFileRealRename(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ファイル作成に失敗: %v", err)
 	}
-    file.Close()
+	file.Close()
 
 	// dryRunがfalseの場合、実際にファイルをリネーム
 	err = RenameFile(oldFile, newFile, false)

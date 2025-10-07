@@ -14,7 +14,7 @@ import (
 const DB_FILE = ".name_tidy_history.db"
 
 type RenameHistory struct {
-	ID            uint      `gorm:"primaryKey"`
+	ID            uint `gorm:"primaryKey"`
 	OriginalPath  string
 	NewPath       string
 	Operation     string // "clean" または "number"
@@ -61,7 +61,7 @@ func SaveRenameHistory(db *gorm.DB, entries map[string]string, operation string)
 func GetLastUndoableBatch(db *gorm.DB) (string, error) {
 	var last RenameHistory
 	if err := db.Where("reverted = ? AND redone = ?", false, false).
-			Order("created_at desc").First(&last).Error; err != nil {
+		Order("created_at desc").First(&last).Error; err != nil {
 		return "", errors.New("no operation to undo")
 	}
 	return last.BatchID, nil
@@ -70,7 +70,7 @@ func GetLastUndoableBatch(db *gorm.DB) (string, error) {
 func GetLastRedoableBatch(db *gorm.DB) (string, error) {
 	var last RenameHistory
 	if err := db.Where("reverted = ? AND redone = ?", true, false).
-			Order("created_at desc").First(&last).Error; err != nil {
+		Order("created_at desc").First(&last).Error; err != nil {
 		return "", errors.New("no operation to redo")
 	}
 	return last.BatchID, nil

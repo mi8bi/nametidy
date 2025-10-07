@@ -5,13 +5,14 @@ package cmd
 
 import (
 	"nametidy/internal/cleaner"
+
 	"github.com/spf13/cobra"
 )
 
 var redoCmd = &cobra.Command{
 	Use:   "redo",
 	Short: "Redoes the most recent rename operation.",
-    Run:   runWithCommonSetup("redo the rename operation", cleaner.Redo),
+	Run:   runWithCommonSetup("redo the rename operation", cleaner.Redo),
 }
 
 func init() {

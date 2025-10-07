@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"nametidy/internal/cleaner"
+
 	"github.com/spf13/cobra"
 )
 
 var undoCmd = &cobra.Command{
 	Use:   "undo",
 	Short: "Undoes the most recent rename operation.",
-    Run:   runWithCommonSetup("undo the rename operation", cleaner.Undo),
+	Run:   runWithCommonSetup("undo the rename operation", cleaner.Undo),
 }
 
 func init() {

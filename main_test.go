@@ -49,7 +49,7 @@ func TestClean(t *testing.T) {
 
 	exeName := buildExecutable(t)
 
-	cmd := exec.Command("./" + exeName, "clean", "--path="+testDir)
+	cmd := exec.Command("./"+exeName, "clean", "--path="+testDir)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("エラー: %v\n出力: %s", err, string(output))
@@ -74,7 +74,7 @@ func TestDryRun(t *testing.T) {
 	defer teardownTestEnvironment()
 
 	exeName := buildExecutable(t)
-	cmd := exec.Command("./" + exeName, "clean", "--path="+testDir, "--dry-run")
+	cmd := exec.Command("./"+exeName, "clean", "--path="+testDir, "--dry-run")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("エラー: %v\n出力: %s", err, string(output))
@@ -104,7 +104,7 @@ func TestUndo(t *testing.T) {
 	exeName := buildExecutable(t)
 
 	// Step 1: `--clean` でリネーム実行
-	cmd := exec.Command("./" + exeName, "clean", "--path="+testDir)
+	cmd := exec.Command("./"+exeName, "clean", "--path="+testDir)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("エラー: %v\n出力: %s", err, string(output))
@@ -117,7 +117,7 @@ func TestUndo(t *testing.T) {
 	}
 
 	// Step 3: `--undo` でリネーム取り消し
-	cmd = exec.Command("./" + exeName, "undo", "--path="+testDir)
+	cmd = exec.Command("./"+exeName, "undo", "--path="+testDir)
 	output, err = cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("エラー: %v\n出力: %s", err, string(output))
@@ -140,11 +140,11 @@ func TestUndoDryRun(t *testing.T) {
 	exeName := buildExecutable(t)
 
 	// Step 1: `--clean` でリネーム実行
-	cmd := exec.Command("./" + exeName, "clean", "--path="+testDir)
+	cmd := exec.Command("./"+exeName, "clean", "--path="+testDir)
 	cmd.CombinedOutput()
 
 	// Step 2: `--undo --dry-run` で取り消しのシミュレーション
-	cmd = exec.Command("./" + exeName, "undo", "--path="+testDir, "--dry-run")
+	cmd = exec.Command("./"+exeName, "undo", "--path="+testDir, "--dry-run")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("エラー: %v\n出力: %s", err, string(output))
@@ -169,7 +169,7 @@ func TestUndoDryRun(t *testing.T) {
 // TestInvalidDirectory - エラーハンドリングのテスト
 func TestInvalidDirectory(t *testing.T) {
 	exeName := buildExecutable(t)
-	cmd := exec.Command("./" + exeName, "clean", "--path=invalid_dir")
+	cmd := exec.Command("./"+exeName, "clean", "--path=invalid_dir")
 	output, _ := cmd.CombinedOutput()
 
 	if !strings.Contains(string(output), "The specified directory does not exist") {
