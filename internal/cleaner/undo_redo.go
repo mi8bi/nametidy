@@ -1,9 +1,9 @@
 package cleaner
 
 import (
-	"nametidy/internal/utils"
 	"errors"
 	"fmt"
+	"nametidy/internal/utils"
 
 	"gorm.io/gorm"
 )

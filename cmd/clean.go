@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"nametidy/internal/cleaner"
+
 	"github.com/spf13/cobra"
 )
 
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
 	Short: "Cleans up file names.",
-    Run:   runWithCommonSetup("file name cleanup", cleaner.Clean),
+	Run:   runWithCommonSetup("file name cleanup", cleaner.Clean),
 }
 
 func init() {

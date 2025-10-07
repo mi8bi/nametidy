@@ -15,10 +15,10 @@ func TestAddNumbering(t *testing.T) {
 
 	// 通常のファイル作成
 	testCases := []struct {
-		fileName     string
-		digits       int
-		index        int
-		expected     string
+		fileName string
+		digits   int
+		index    int
+		expected string
 	}{
 		{"old_file.txt", 3, 1, "001_old_file.txt"},
 		{"old_file.txt", 1, 1, "1_old_file.txt"},

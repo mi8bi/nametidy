@@ -1,8 +1,8 @@
 package cleaner
 
 import (
-	"nametidy/internal/utils"
 	"fmt"
+	"nametidy/internal/utils"
 	"os"
 	"path/filepath"
 	"time"
@@ -47,7 +47,6 @@ func Clean(db *gorm.DB, dirPath string, dryRun bool) error {
 		}
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}

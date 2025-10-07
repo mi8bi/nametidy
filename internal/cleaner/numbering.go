@@ -1,8 +1,8 @@
 package cleaner
 
 import (
-	"nametidy/internal/utils"
 	"fmt"
+	"nametidy/internal/utils"
 	"os"
 	"path/filepath"
 	"time"
@@ -55,7 +55,6 @@ func NumberFiles(db *gorm.DB, dirPath string, digits int, hierarchical bool, dry
 		}
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}

@@ -10,11 +10,11 @@ import (
 
 // IsDirectory checks if the specified path is a directory
 func IsDirectory(path string) bool {
-    info, err := os.Stat(path)
-    if err != nil {
-        return false
-    }
-    return info.IsDir()
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
 }
 
 // CleanFileName cleans up the file name by replacing unwanted characters
@@ -40,22 +40,22 @@ func CleanFileName(fileName string) string {
 
 // RenameFile renames a file from oldPath to newPath
 func RenameFile(oldPath, newPath string, dryRun bool) error {
-    if dryRun {
-        fmt.Printf("[DRY-RUN] %s → %s\n", oldPath, newPath)
-        return nil
-    }
+	if dryRun {
+		fmt.Printf("[DRY-RUN] %s → %s\n", oldPath, newPath)
+		return nil
+	}
 
-    err := os.Rename(oldPath, newPath)
-    if err != nil {
-        return fmt.Errorf("Rename failed: %v", err)
-    }
+	err := os.Rename(oldPath, newPath)
+	if err != nil {
+		return fmt.Errorf("Rename failed: %v", err)
+	}
 
-    fmt.Printf("Renamed: %s → %s\n", filepath.Base(oldPath), filepath.Base(newPath))
-    return nil
+	fmt.Printf("Renamed: %s → %s\n", filepath.Base(oldPath), filepath.Base(newPath))
+	return nil
 }
 
 // FileExists checks if the specified file exists at the given path
 func FileExists(path string) bool {
-    _, err := os.Stat(path)
-    return !os.IsNotExist(err)
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
 }
